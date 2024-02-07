@@ -1,13 +1,13 @@
-from plateau import Plateau
+from board import Board
 from settings import *
 import random
 
 
 class AIPlayer:
 
-    def __init__(self, type:int, plateau:Plateau):
+    def __init__(self, type:int, board:Board):
         self.type = type
-        self.plateau = plateau
+        self.board = board
     
 
     def add_pion(self, alg_type:int):
@@ -32,7 +32,7 @@ class AIPlayer:
         """
         Joue un coup aléatoire
         """
-        pm = Plateau.possible_moves(self.plateau, self.type) 
+        pm = self.board.possible_moves(self.type) 
         rand_ind = random.randint(0, len(pm)-1)       
         rand_pm = pm[rand_ind]
 

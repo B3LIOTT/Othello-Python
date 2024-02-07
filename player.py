@@ -1,4 +1,4 @@
-from plateau import Plateau
+from board import Board
 from settings import *
 
 class Player:

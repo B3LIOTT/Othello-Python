@@ -2,7 +2,7 @@ import numpy as np
 from settings import *
 
 
-class Plateau:
+class Board:
     """
     Plateau de jeu du jeu Othello, de taille x*y.
     0 = case vide
@@ -41,7 +41,7 @@ class Plateau:
         l = [(1,0), (0,1), (-1,0), (0,-1), (1,1), (-1,-1), (1,-1), (-1,1)]
         self.adjacents.remove((x, y))
         for dx, dy in l:
-            if self.game_array[dx, dy] == 0 and (x+dx, y+dy) not in self.adjacents:
+            if self.game_array[dx, dy] == 0 and (x+dx, y+dy) not in self.adjacents and 0 <= x+dx < self.x and 0 <= y+dy < self.y:
                 self.adjacents.append((x+dx, y+dy))
 
     def update_state(self, data, type, x, y):
@@ -139,4 +139,6 @@ class Plateau:
                 T[x, y] = self.game_array[x, y]
         
         print(T)
+        print("---------------------")
+        print("Adjacents: ", self.adjacents)
             

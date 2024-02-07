@@ -1,0 +1,8 @@
+
+DEBUG=True
+ANALYSE=False
+
+SIZE_X = 8
+SIZE_Y = 8
+SLEEP_TIME = 2
+ALG_TYPE = 0

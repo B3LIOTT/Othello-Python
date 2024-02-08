@@ -17,7 +17,7 @@ class Board:
         self.value_range = [0,1,2]
         self.game_array = np.zeros((x, y))
 
-        if x%2!=0 and y%2!=0:
+        if x%2!=0 or y%2!=0:
             raise ValueError("x et y doivent être pairs")
 
         self.game_array[x//2-1, y//2-1] = 2

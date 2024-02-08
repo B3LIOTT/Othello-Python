@@ -54,7 +54,7 @@ class Board:
         self.game_array[x, y] = type
         self.update_adjacents(x, y)
         
-        for i in range(self.x):
+        for i in range(len(data[2])):
             pm = data[2][i]
 
             if pm[0]:

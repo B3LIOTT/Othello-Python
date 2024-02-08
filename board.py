@@ -97,9 +97,9 @@ class Board:
         """
 
         if (x, y) not in self.adjacents:
-            return [[False, None, None, None]]*8
+            return [[False, None, None, None]]*SIZE_X
     
-        res_l = [[False, None, None, None]]*8
+        res_l = [[False, None, None, None]]*SIZE_X
         directions = [(0, 1), (1, 0), (1, 1), (1, -1), (0, -1), (-1, 0), (-1, -1), (-1, 1)]
         for k in range(8):
             dx, dy = directions[k]

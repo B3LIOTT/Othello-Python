@@ -9,7 +9,7 @@ class AIPlayer:
         self.type = type
     
 
-    def add_pion(self, alg_type:int):
+    def add_pion(self, alg_type:int, pm: list):
         """
         Joue un coup en fonction de l'algorithme choisi
 
@@ -18,7 +18,7 @@ class AIPlayer:
         :return: coordonnées du coup
         """
         if alg_type == 0:
-            return self.random_play()
+            return self.random_play(pm)
         elif alg_type == 1:
             return self.minimax()
         elif alg_type == 2:

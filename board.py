@@ -47,8 +47,9 @@ class Board:
         l = [(1,0), (0,1), (-1,0), (0,-1), (1,1), (-1,-1), (1,-1), (-1,1)]
         self.adjacents.remove((x, y))
         for dx, dy in l:
-            if self.game_array[dx, dy] == 0 and (x+dx, y+dy) not in self.adjacents and 0 <= x+dx < SIZE and 0 <= y+dy < SIZE:
-                self.adjacents.append((x+dx, y+dy))
+            if 0 <= x+dx < SIZE and 0 <= y+dy < SIZE:
+                if self.game_array[x+dx, x+dy] == 0 and (x+dx, y+dy) not in self.adjacents:
+                    self.adjacents.append((x+dx, y+dy))
 
     def update_state(self, data, type, x, y):
         """

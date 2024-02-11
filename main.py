@@ -11,6 +11,7 @@ import cv2
 import numpy as np
 
 
+
 def play(x: int, y: int, board: Board, move):
     """
     Joue un coup
@@ -49,11 +50,10 @@ def process_input(Player: Player, board: Board):
     pm = board.possible_moves(Player.type)  
     if len(pm) == 0:
         if DEBUG:
-            print("[+] Aucun coup possible")
+            print("[!] Aucun coup possible")
         return
     
-    opencv_display(board, pm, Player.type)
-
+    opencv_display(board, pm, Player.type, interactable = True)
 
 def process_input_ai(AIPlayer: AIPlayer, board: Board):
     """
@@ -65,9 +65,10 @@ def process_input_ai(AIPlayer: AIPlayer, board: Board):
     pm = board.possible_moves(AIPlayer.type)
     if len(pm) == 0:
         if DEBUG:
-            print("[+] Aucun coup possible")
+            print("[!] Aucun coup possible")
         return
     
+    opencv_display(board, pm, AIPlayer.type, interactable = False)
     x, y, ind = AIPlayer.add_pion(ALG_TYPE, pm)
 
     if DEBUG:
@@ -90,17 +91,19 @@ def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlay
         i += 1
         print("Tour: ", i)
 
-        if type(Player1) == AIPlayer:
-            process_input_ai(Player1, board)
-            sleep(SLEEP_TIME)
-        else:
-            process_input(Player1, board)
+        if i%2 != 0:
+            if type(Player1) == AIPlayer:
+                process_input_ai(Player1, board)
+                sleep(SLEEP_TIME)
+            else:
+                process_input(Player1, board)
 
-        if type(Player2) == AIPlayer:
-            process_input_ai(Player2, board)
-            sleep(SLEEP_TIME)
         else:
-            process_input(Player2, board)
+            if type(Player2) == AIPlayer:
+                process_input_ai(Player2, board)
+                sleep(SLEEP_TIME)
+            else:
+                process_input(Player2, board)
 
 def start_game(type: int):
     """
@@ -122,9 +125,6 @@ def start_game(type: int):
     else:
         p1 = AIPlayer(1)
         p2 = AIPlayer(2)
-
-    if p1.type == p2.type:
-        raise ValueError("Les joueurs ne peuvent pas être du même type")
     
     print("[+] Debug mode activated: ", DEBUG)
     game_loop(board, p1, p2)
@@ -132,7 +132,7 @@ def start_game(type: int):
 
 
 # UI
-def mouse_click(event, x, y, flags, params):
+def mouse_click_event(event, x, y, flags, params):
     if event == cv2.EVENT_LBUTTONDOWN:
         cs, board, pm = params
         row = y // cs
@@ -140,6 +140,7 @@ def mouse_click(event, x, y, flags, params):
 
         if DEBUG:
             print("[+] Click: ", row, col)
+            print("[+] Details: ", pm)
         
         play(row, col, board, pm[is_possible(pm, row, col)[1]])
 
@@ -180,13 +181,13 @@ def opencv_display(board: Board, possible_moves: list, type:int, interactable : 
 
     #add mouse click event to play
     if interactable :
-        cv2.setMouseCallback("Othello", mouse_click, [cell_size, board, possible_moves])
+        cv2.setMouseCallback("Othello", mouse_click_event, [cell_size, board, possible_moves])
 
     key = cv2.waitKey(10)
 
     if key == ord("q") :
         cv2.destroyAllWindows()
-        return False
+        exit(0)
 
     return True
 

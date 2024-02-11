@@ -37,6 +37,7 @@ def is_possible(pm: list, x: int, y: int):
         
     return False, -1
 
+# TODO: fix
 def process_input(Player: Player, board: Board):
     """
     Traite l'entrée du joueur
@@ -72,7 +73,7 @@ def process_input_ai(AIPlayer: AIPlayer, board: Board):
         return
     
     opencv_display(board, pm, AIPlayer.type, interactable = False)
-    x, y, ind = AIPlayer.add_pion(ALG_TYPE, pm)
+    x, y, ind = AIPlayer.play(board, ALG_TYPE, pm)
 
     if DEBUG:
         print("[+] Coup IA: ", x, y, AIPlayer.type)
@@ -112,6 +113,8 @@ def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlay
                 process_input(Player2, board)
         
         i += 1
+    
+    game_over(board)
 
 def start_game(type: int):
     """
@@ -137,7 +140,24 @@ def start_game(type: int):
     print("[+] Debug mode activated: ", DEBUG)
     game_loop(board, p1, p2)
 
+def game_over(board: Board):
+    """
+    Affiche le vainqueur
 
+    :param board: plateau
+    """
+    print("[+]---- Fin de la partie ---- ")
+    nb_discs_p1 = np.sum(board.game_array == 1)
+    nb_discs_p2 = np.sum(board.game_array == 2)
+
+    print("[+] Score: ", nb_discs_p1, " - ", nb_discs_p2)
+
+    if nb_discs_p1 > nb_discs_p2:
+        print("[+] Les noirs gagnent")
+    elif nb_discs_p1 < nb_discs_p2:
+        print("[+] Les blancs gagnent")
+
+        
 
 # UI
 def mouse_click_event(event, x, y, flags, params):

@@ -11,7 +11,6 @@ class Board:
     """
     def __init__(self):
         self.range_size = range(SIZE)
-        self.value_range = [0,1,2]
         self.game_array = np.zeros((SIZE, SIZE))
 
         if SIZE%2 != 0:
@@ -141,4 +140,15 @@ class Board:
         print(self.game_array)
         print("---------------------")
         print("Adjacents: ", self.adjacents)
+
+    
+    def copy(self):
+        """
+        Retourne une copie du plateau
+        """
+        copy = Board()
+        copy.game_array = self.game_array.copy()
+        copy.adjacents = self.adjacents.copy()
+
+        return copy
             

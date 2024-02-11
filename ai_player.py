@@ -5,9 +5,8 @@ import random
 
 class AIPlayer:
 
-    def __init__(self, type:int, board:Board):
+    def __init__(self, type:int):
         self.type = type
-        self.board = board
     
 
     def add_pion(self, alg_type:int):
@@ -28,11 +27,10 @@ class AIPlayer:
             raise ValueError("[!] Invalid algorithm type")
 
 
-    def random_play(self):
+    def random_play(self, pm: list):
         """
         Joue un coup aléatoire
-        """
-        pm = self.board.possible_moves(self.type) 
+        """ 
         rand_ind = random.randint(0, len(pm)-1)       
         rand_pm = pm[rand_ind]
 

@@ -9,27 +9,33 @@ class Board:
     1 = pion noir
     2 = pion blanc
     """
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.range_x = range(x)
-        self.range_y = range(y)
+    def __init__(self):
+        self.range_x = range(SIZE)
+        self.range_y = range(SIZE)
         self.value_range = [0,1,2]
-        self.game_array = np.zeros((x, y))
+        self.game_array = np.zeros((SIZE, SIZE))
 
-        if x%2!=0 or y%2!=0:
-            raise ValueError("x et y doivent être pairs")
+        if SIZE%2 != 0:
+            raise ValueError("Les dimensions du plateau doivent être pairs")
 
-        self.game_array[x//2-1, y//2-1] = 2
-        self.game_array[x//2, y//2] = 2
-        self.game_array[x//2-1, y//2] = 1
-        self.game_array[x//2, y//2-1] = 1
+        self.game_array[SIZE//2-1, SIZE//2-1] = 2
+        self.game_array[SIZE//2, SIZE//2] = 2
+        self.game_array[SIZE//2-1, SIZE//2] = 1
+        self.game_array[SIZE//2, SIZE//2-1] = 1
 
         self.adjacents = [
-            (x//2-1,y//2-2), (x//2-2, y//2-1), (x//2-2,x//2-2),
-            (x//2-1,y//2), (x//2-2, y//2+1), (x//2-2,y//2),
-            (x//2,y//2-1), (x//2+1, y//2-2), (x//2,y//2-2),
-            (x//2,y//2+1), (x//2+1, y//2), (x//2+1,y//2+1)
+            (SIZE // 2 - 2, SIZE // 2 - 2),
+            (SIZE // 2 - 2, SIZE // 2 - 1),
+            (SIZE // 2 - 2, SIZE // 2),
+            (SIZE // 2 - 2, SIZE // 2 + 1),
+            (SIZE // 2 - 1, SIZE // 2 - 2),
+            (SIZE // 2 - 1, SIZE // 2 + 1),
+            (SIZE // 2, SIZE // 2 - 2),
+            (SIZE // 2, SIZE // 2 + 1),
+            (SIZE // 2 + 1, SIZE // 2 - 2),
+            (SIZE // 2 + 1, SIZE // 2 - 1),
+            (SIZE // 2 + 1, SIZE // 2),
+            (SIZE // 2 + 1, SIZE // 2 + 1)
         ]
     
 
@@ -41,7 +47,7 @@ class Board:
         l = [(1,0), (0,1), (-1,0), (0,-1), (1,1), (-1,-1), (1,-1), (-1,1)]
         self.adjacents.remove((x, y))
         for dx, dy in l:
-            if self.game_array[dx, dy] == 0 and (x+dx, y+dy) not in self.adjacents and 0 <= x+dx < self.x and 0 <= y+dy < self.y:
+            if self.game_array[dx, dy] == 0 and (x+dx, y+dy) not in self.adjacents and 0 <= x+dx < SIZE and 0 <= y+dy < SIZE:
                 self.adjacents.append((x+dx, y+dy))
 
     def update_state(self, data, type, x, y):
@@ -66,8 +72,7 @@ class Board:
                     self.game_array[current_x, current_y] = type
                     current_x += dx
                     current_y += dy
- 
-    
+  
     def possible_moves(self, type:int):
         """
         Retourne la liste des coups possibles pour un joueur
@@ -97,9 +102,9 @@ class Board:
         """
 
         if (x, y) not in self.adjacents:
-            return [[False, None, None, None]]*SIZE_X
+            return [[False, None, None, None]]*SIZE
     
-        res_l = [[False, None, None, None]]*SIZE_X
+        res_l = [[False, None, None, None]]*SIZE
         directions = [(0, 1), (1, 0), (1, 1), (1, -1), (0, -1), (-1, 0), (-1, -1), (-1, 1)]
         for k in range(8):
             dx, dy = directions[k]
@@ -107,7 +112,7 @@ class Board:
             current_x, current_y = x + dx, y + dy
             opposite = (-1, -1)
 
-            while 0 <= current_x < self.x and 0 <= current_y < self.y:
+            while 0 <= current_x < SIZE and 0 <= current_y < SIZE:
                 if self.game_array[current_x, current_y] == self.other_type(type):
                     opposite = (current_x, current_y)
                 elif self.game_array[current_x, current_y] == type and opposite != (-1, -1):
@@ -121,7 +126,6 @@ class Board:
 
         return res_l
     
-    
     def other_type(self, type:int):
         """
         Retourne le conjugué du type de pion
@@ -130,15 +134,9 @@ class Board:
             return 2
         else:
             return 1
-    
 
     def display_array(self):
-        T = np.zeros((self.x, self.y))
-        for x in self.range_x:
-            for y in self.range_y:
-                T[x, y] = self.game_array[x, y]
-        
-        print(T)
+        print(self.game_array)
         print("---------------------")
         print("Adjacents: ", self.adjacents)
             

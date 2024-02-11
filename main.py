@@ -51,6 +51,8 @@ def process_input(Player: Player, board: Board):
     if len(pm) == 0:
         if DEBUG:
             print("[!] Aucun coup possible")
+
+        CAN_MOVE[Player.type-1] = False
         return
     
     opencv_display(board, pm, Player.type, interactable = True)
@@ -66,6 +68,7 @@ def process_input_ai(AIPlayer: AIPlayer, board: Board):
     if len(pm) == 0:
         if DEBUG:
             print("[!] Aucun coup possible")
+        CAN_MOVE[AIPlayer.type-1] = False
         return
     
     opencv_display(board, pm, AIPlayer.type, interactable = False)
@@ -86,12 +89,15 @@ def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlay
     :param Player2: joueur 2
     :param game_type: type d'affrontement
     """
-    i = 0
-    while True:
-        i += 1
-        print("Tour: ", i)
+    global CAN_MOVE
+    CAN_MOVE = [True, True]
 
-        if i%2 != 0:
+    i = 0
+    while CAN_MOVE[0] or CAN_MOVE[1]:
+        CAN_MOVE[i%2] = True
+        print("Tour: ", i+1)
+
+        if i%2 == 0:
             if type(Player1) == AIPlayer:
                 process_input_ai(Player1, board)
                 sleep(SLEEP_TIME)
@@ -104,6 +110,8 @@ def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlay
                 sleep(SLEEP_TIME)
             else:
                 process_input(Player2, board)
+        
+        i += 1
 
 def start_game(type: int):
     """

@@ -10,8 +10,7 @@ class Board:
     2 = pion blanc
     """
     def __init__(self):
-        self.range_x = range(SIZE)
-        self.range_y = range(SIZE)
+        self.range_size = range(SIZE)
         self.value_range = [0,1,2]
         self.game_array = np.zeros((SIZE, SIZE))
 
@@ -48,7 +47,7 @@ class Board:
         self.adjacents.remove((x, y))
         for dx, dy in l:
             if 0 <= x+dx < SIZE and 0 <= y+dy < SIZE:
-                if self.game_array[x+dx, x+dy] == 0 and (x+dx, y+dy) not in self.adjacents:
+                if self.game_array[x+dx, y+dy] == 0 and (x+dx, y+dy) not in self.adjacents:
                     self.adjacents.append((x+dx, y+dy))
 
     def update_state(self, data, type, x, y):
@@ -84,7 +83,7 @@ class Board:
         for adj in self.adjacents:
             x, y = adj
             check = self.check_lines(x, y, type)
-            successes = [check[i][0] for i in range(8)]
+            successes = [check[i][0] for i in self.range_size]
             if successes.__contains__(True):
                 moves.append((x, y, check))
 
@@ -102,21 +101,23 @@ class Board:
         :return: liste des coups possibles avec leurs caractéristiques (comme la direction par exemple)
         """
 
-        if (x, y) not in self.adjacents:
-            return [[False, None, None, None]]*SIZE
-    
         res_l = [[False, None, None, None]]*SIZE
+
+        if (x, y) not in self.adjacents:
+            return res_l
+    
         directions = [(0, 1), (1, 0), (1, 1), (1, -1), (0, -1), (-1, 0), (-1, -1), (-1, 1)]
-        for k in range(8):
+        for k in self.range_size:
             dx, dy = directions[k]
 
             current_x, current_y = x + dx, y + dy
-            opposite = (-1, -1)
+            opposite = (None, None)
 
             while 0 <= current_x < SIZE and 0 <= current_y < SIZE:
                 if self.game_array[current_x, current_y] == self.other_type(type):
                     opposite = (current_x, current_y)
-                elif self.game_array[current_x, current_y] == type and opposite != (-1, -1):
+
+                elif self.game_array[current_x, current_y] == type and opposite != (None, None):
                     res_l[k] = [True, opposite, (dx, dy), (current_x, current_y)]
                     break
                 else:

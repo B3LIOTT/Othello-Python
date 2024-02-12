@@ -73,13 +73,13 @@ def process_input_ai(AIPlayer: AIPlayer, board: Board):
         return
     
     opencv_display(board, pm, AIPlayer.type, interactable = False)
-    x, y, ind = AIPlayer.play(board, ALG_TYPE, pm)
+    rand_move = AIPlayer.play(board, ALG_TYPE, pm)
 
     if DEBUG:
-        print("[+] Coup IA: ", x, y, AIPlayer.type)
-        print("[+] Details: ", pm[ind])
+        print("[+] Coup IA: ", rand_move[0],  rand_move[1], AIPlayer.type)
+        print("[+] Details: ", rand_move)
         
-    board.update_state(pm[ind], AIPlayer.type, x, y)
+    board.update_state(rand_move, AIPlayer.type, rand_move[0], rand_move[1])
 
 def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlayer):
     """
@@ -156,6 +156,8 @@ def game_over(board: Board):
         print("[+] Les noirs gagnent")
     elif nb_discs_p1 < nb_discs_p2:
         print("[+] Les blancs gagnent")
+    else:
+        print("[+] Match nul")
 
         
 

@@ -23,7 +23,8 @@ class AIPlayer:
             return self.random_play(pm)
         elif alg_type == 1:
             copy = board.copy()
-            return self.negamax(copy, depth=0)
+            nm = self.negamax(copy, 0)
+            return nm[1][0], nm[1][1]
         elif alg_type == 2:
             return self.alpha_beta()
         else:
@@ -37,7 +38,7 @@ class AIPlayer:
         rand_ind = random.randint(0, len(pm)-1)       
         rand_pm = pm[rand_ind]
 
-        return rand_pm[0], rand_pm[1], rand_ind
+        return rand_pm
 
     def minimax(self):
         raise NotImplementedError
@@ -62,7 +63,7 @@ class AIPlayer:
         for move in moves:
             board_copy = board.copy()
             board.update_state(move, self.type, move[0], move[1]) 
-            score = -self.negamax(board_copy, board.adjacents, self.other_type, depth+1)[0]
+            score = -self.negamax(board_copy, depth+1)[0]
 
             if score == best and random.choice([True, False]):  
                 best_move = move

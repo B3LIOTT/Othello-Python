@@ -248,6 +248,9 @@ def opencv_display(board: Board, possible_moves: list, type:int, interactable : 
     if interactable:
         x, y, move = mouse_callback_process(possible_moves)
         play(x, y, board, move, type)
+    
+    else:
+        cv2.waitKey(10) # pour ralentir l'affichage, sinon c'est trop rapide et rien ne s'affiche
         
 
 

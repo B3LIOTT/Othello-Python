@@ -3,7 +3,7 @@ import numpy as np
 
 DEBUG=False
 ANALYSE=True
-NB_ITERATIONS=10000
+NB_ITERATIONS=1000
 
 # GAME
 SIZE = 8

@@ -161,17 +161,23 @@ def game_over(board: Board, delta: float):
 
     print("[+] Score: ", nb_discs_p1, " - ", nb_discs_p2)
 
+    black = 0
+    white = 0
     if nb_discs_p1 > nb_discs_p2:
         print("[+] Les noirs gagnent")
+        black = 1
+
     elif nb_discs_p1 < nb_discs_p2:
         print("[+] Les blancs gagnent")
+        white = 1
+
     else:
         print("[+] Match nul")
     
     if ANALYSE:
-        print("[+] Temps de jeu: ", delta)
+        print("[+] Temps de jeu: ", delta, "s")
     
-    return delta
+    return delta, black, white
 
 
 
@@ -239,10 +245,19 @@ def opencv_display(board: Board, possible_moves: list, type:int, interactable : 
 if __name__ == '__main__':
     if ANALYSE:
         mean = 0
+        black = 0
+        white = 0
         for i in range(NB_ITERATIONS):
-            mean += start_game(0, display=False)/NB_ITERATIONS
+            res = start_game(0, display=False)
+            mean += res[0]/NB_ITERATIONS
+            black += res[1]/NB_ITERATIONS
+            white += res[2]/NB_ITERATIONS
         
-        print("[+] Moyenne: ", mean)
-            
+        print("-----------------------------")
+        print("[+] Moyenne: ", mean, "s")
+        print("[+] Victoires des noirs: ", round(black*100), "%")
+        print("[+] Victoires des blancs: ", round(white*100), "%")
+        print("[+] Matchs nuls: ", 100 - round(black*100) - round(white*100), "%")
+        
     else:
         start_game(0, display=True)

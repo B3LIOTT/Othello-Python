@@ -38,7 +38,7 @@ def is_possible(pm: list, x: int, y: int):
     return False, -1
 
 # TODO: fix
-def process_input(Player: Player, board: Board, display: bool):
+def process_input(Player: Player, board: Board):
     """
     Traite l'entrée du joueur
 
@@ -56,10 +56,10 @@ def process_input(Player: Player, board: Board, display: bool):
         CAN_MOVE[Player.type-1] = False
         return
     
-    if display:
+    if DISPLAY:
         opencv_display(board, pm, Player.type, interactable = True)
 
-def process_input_ai(AIPlayer: AIPlayer, board: Board, display: bool):
+def process_input_ai(AIPlayer: AIPlayer, board: Board):
     """
     Traite l'entrée de l'IA
 
@@ -73,7 +73,7 @@ def process_input_ai(AIPlayer: AIPlayer, board: Board, display: bool):
         CAN_MOVE[AIPlayer.type-1] = False
         return
     
-    if display:
+    if DISPLAY:
         opencv_display(board, pm, AIPlayer.type, interactable = False)
 
     rand_move = AIPlayer.play(board, ALG_TYPE, pm)
@@ -84,7 +84,7 @@ def process_input_ai(AIPlayer: AIPlayer, board: Board, display: bool):
         
     board.update_state(rand_move, AIPlayer.type, rand_move[0], rand_move[1])
 
-def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlayer, display: bool):
+def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlayer):
     """
     Boucle principale du jeu
 
@@ -107,17 +107,17 @@ def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlay
 
         if i%2 == 0:
             if type(Player1) == AIPlayer:
-                process_input_ai(Player1, board, display)
+                process_input_ai(Player1, board)
                 sleep(SLEEP_TIME)
             else:
-                process_input(Player1, board, display)
+                process_input(Player1, board)
 
         else:
             if type(Player2) == AIPlayer:
-                process_input_ai(Player2, board, display)
+                process_input_ai(Player2, board)
                 sleep(SLEEP_TIME)
             else:
-                process_input(Player2, board, display)
+                process_input(Player2, board)
         
         i += 1
     
@@ -125,7 +125,7 @@ def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlay
     delta = time.time() - start_time
     return game_over(board, delta)
 
-def start_game(type: int, display: bool = True):
+def start_game(type: int):
     """
     Démarre le jeu
 
@@ -147,7 +147,10 @@ def start_game(type: int, display: bool = True):
         p2 = AIPlayer(2)
     
     print("[+] Debug mode activated: ", DEBUG)
-    return game_loop(board, p1, p2, display)
+    print("[+] Analyse mode activated: ", ANALYSE)
+    print("[+] Display mode activated: ", DISPLAY)
+
+    return game_loop(board, p1, p2)
 
 def game_over(board: Board, delta: float):
     """
@@ -183,63 +186,11 @@ def game_over(board: Board, delta: float):
 
 # UI
 def mouse_click_event(event, x, y, flags, params):
-    if event == cv2.EVENT_LBUTTONDOWN:
-        cs, board, pm = params
-        row = y // cs
-        col = x // cs
-
-        if DEBUG:
-            print("[+] Click: ", row, col)
-            print("[+] Details: ", pm)
-        
-        play(row, col, board, pm[is_possible(pm, row, col)[1]])
+    raise NotImplementedError
 
 
 def opencv_display(board: Board, possible_moves: list, type:int, interactable : bool = True) :
-
-    img = np.zeros((SIZE, SIZE, 3), dtype = np.uint8)
-
-    for i in range(SIZE) :
-        for j in range(SIZE) :
-            if board.game_array[i, j] == 0 :
-                img[i, j] = bg_color
-            elif  board.game_array[i, j] == 1 :
-                img[i, j] = black_color
-            else :
-                img[i, j] = white_color
-    
-    for i in range(len(possible_moves)):
-        if type == 1:
-            img[possible_moves[i][0], possible_moves[i][1]] = valid_move_color_black
-        elif type == 2:
-            img[possible_moves[i][0], possible_moves[i][1]] = valid_move_color_white
-        else:
-            raise ValueError("[!] Invalid type")
-
-    img = cv2.resize(img, (SIZE * cell_size, SIZE* cell_size), interpolation = cv2.INTER_NEAREST)
-
-    # add lines
-    for i in range(1, SIZE) :
-        img = cv2.line(img, (0, i * cell_size), (SIZE * cell_size, i * cell_size), (0, 0, 0), 2)
-        img = cv2.line(img, (i * cell_size, 0), (i * cell_size, SIZE * cell_size), (0, 0, 0), 2)
-
-    #convert to RGB
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)            
-
-    #display the board
-    cv2.imshow("Othello", img)
-
-    #add mouse click event to play
-    if interactable :
-        cv2.setMouseCallback("Othello", mouse_click_event, [cell_size, board, possible_moves])
-
-    key = cv2.waitKey(10)
-
-    if key == ord("q") :
-        cv2.destroyAllWindows()
-        exit(0)
-
-    return True
+    raise NotImplementedError
 
 
 if __name__ == '__main__':
@@ -260,4 +211,4 @@ if __name__ == '__main__':
         print("[+] Matchs nuls: ", 100 - round(black*100) - round(white*100), "%")
         
     else:
-        start_game(0, display=True)
+        start_game(0)

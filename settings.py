@@ -4,6 +4,7 @@ import numpy as np
 DEBUG=False
 ANALYSE=True
 NB_ITERATIONS=1000
+DISPLAY=False
 
 # GAME
 SIZE = 8

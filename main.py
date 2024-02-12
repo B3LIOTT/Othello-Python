@@ -192,7 +192,7 @@ def mouse_event_checker(img: np.ndarray):
     x = -1
     y = -1
     def mouse_callback(event, x_, y_, flags, param):
-        cell_size, board, pm = param
+        board, pm = param
         nonlocal x, y
         if event == cv2.EVENT_LBUTTONDOWN:
             y = x_//100
@@ -212,11 +212,11 @@ def opencv_display(board: Board, possible_moves: list, type:int, interactable : 
 
     img = np.zeros((SIZE, SIZE, 3), dtype = np.uint8)
 
-    for i in range(SIZE) :
-        for j in range(SIZE) :
-            if board.game_array[i, j] == 0 :
+    for i in range(SIZE):
+        for j in range(SIZE):
+            if board.game_array[i, j] == 0:
                 img[i, j] = bg_color
-            elif  board.game_array[i, j] == 1 :
+            elif  board.game_array[i, j] == 1:
                 img[i, j] = black_color
             else :
                 img[i, j] = white_color
@@ -232,7 +232,7 @@ def opencv_display(board: Board, possible_moves: list, type:int, interactable : 
     img = cv2.resize(img, (SIZE * cell_size, SIZE* cell_size), interpolation = cv2.INTER_NEAREST)
 
     # add lines
-    for i in range(1, SIZE) :
+    for i in range(1, SIZE):
         img = cv2.line(img, (0, i * cell_size), (SIZE * cell_size, i * cell_size), (0, 0, 0), 2)
         img = cv2.line(img, (i * cell_size, 0), (i * cell_size, SIZE * cell_size), (0, 0, 0), 2)
 
@@ -244,7 +244,7 @@ def opencv_display(board: Board, possible_moves: list, type:int, interactable : 
 
     #add mouse click event to play
     if interactable :
-        cv2.setMouseCallback("Othello", mouse_event_checker, [cell_size, board, possible_moves])
+        cv2.setMouseCallback("Othello", mouse_event_checker, [board, possible_moves])
 
     key = cv2.waitKey(10)
 

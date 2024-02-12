@@ -100,7 +100,7 @@ def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlay
         start_time = time.time()
 
     i = 0
-    while CAN_MOVE[0] or CAN_MOVE[1]:
+    while CAN_MOVE[0] and CAN_MOVE[1]:
         CAN_MOVE[i%2] = True
         if DEBUG:
             print("Tour: ", i+1)
@@ -199,7 +199,7 @@ if __name__ == '__main__':
         black = 0
         white = 0
         for i in range(NB_ITERATIONS):
-            res = start_game(0, display=False)
+            res = start_game(0)
             mean += res[0]/NB_ITERATIONS
             black += res[1]/NB_ITERATIONS
             white += res[2]/NB_ITERATIONS

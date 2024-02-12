@@ -1,14 +1,14 @@
 
 import numpy as np
 
-DEBUG=False
-ANALYSE=True
+DEBUG=True
+ANALYSE=False
 NB_ITERATIONS=1000
-DISPLAY=False
+DISPLAY=True
 
 # GAME
 SIZE = 8
-SLEEP_TIME = 0
+SLEEP_TIME = 10
 ALG_TYPE = 0
 
 # IA

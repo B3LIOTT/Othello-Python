@@ -121,8 +121,11 @@ def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlay
         
         i += 1
     
-
-    delta = time.time() - start_time
+    if ANALYSE:
+        delta = time.time() - start_time
+    else:
+        delta = None
+    
     return game_over(board, delta)
 
 def start_game(type: int):
@@ -185,57 +188,70 @@ def game_over(board: Board, delta: float):
 
 
 # UI
-def mouse_click_event(event, x, y, flags, params):
-    raise NotImplementedError
+def mouse_event_checker(img: np.ndarray):
+    x = -1
+    y = -1
+    def mouse_callback(event, x_, y_, flags, param):
+        cell_size, board, pm = param
+        nonlocal x, y
+        if event == cv2.EVENT_LBUTTONDOWN:
+            y = x_//100
+            x = y_//100
+            play(x, y, board, pm[is_possible(pm, x, y)[1]])
+
+    cv2.setMouseCallback("Othello", mouse_callback)
+
+    while True:
+        cv2.imshow("Othello", img)
+        if x != -1 and y != -1:
+            break
+        cv2.waitKey(1)
 
 
-def opencv_display(board: Board, possible_moves: list, type:int, interactable : bool = True) :
+def opencv_display(board: Board, possible_moves: list, type:int, interactable : bool = True):
 
-    img = np.zeros((SIZE, SIZE, 3), dtype=np.uint8)
-    moves_x_y_only = [(move[0], move[1]) for move in list(moves)]
-    
-    # Set the background color
-    img[:] = background
-    # Change the background color for the adjacent cells
-    if adj_cells is not None:
-        for cell in adj_cells:
-            cv2.rectangle(img, (cell[1]*100, cell[0]*100), (cell[1]*100+100, cell[0]*100+100), (0, 160, 0), -1)
-    
-    # Add pieces (circles)
-    for i in range(size):
-        for j in range(size):
-            if board[i][j] == 1:
-                cv2.circle(img, (j*100+50, i*100+50), 40, (255, 255, 255), -1)
-            elif board[i][j] == -1:
-                cv2.circle(img, (j*100+50, i*100+50), 40, (0, 0, 0), -1)
-    # Add possible moves in grey (circles)
-    for move in moves_x_y_only:
-        cv2.circle(img, (move[1]*100+50, move[0]*100+50), 40, (128, 128, 128), -1)
-    # Add grid lines
-    for i in range(0, size):
-        cv2.line(img, (0, i*100), (height, i*100), (0, 0, 0), 1)
-        cv2.line(img, (i*100, 0), (i*100, width), (0, 0, 0), 1)     
-    
+    img = np.zeros((SIZE, SIZE, 3), dtype = np.uint8)
+
+    for i in range(SIZE) :
+        for j in range(SIZE) :
+            if board.game_array[i, j] == 0 :
+                img[i, j] = bg_color
+            elif  board.game_array[i, j] == 1 :
+                img[i, j] = black_color
+            else :
+                img[i, j] = white_color
+
+    for i in range(len(possible_moves)):
+        if type == 1:
+            img[possible_moves[i][0], possible_moves[i][1]] = valid_move_color_black
+        elif type == 2:
+            img[possible_moves[i][0], possible_moves[i][1]] = valid_move_color_white
+        else:
+            raise ValueError("[!] Invalid type")
+
+    img = cv2.resize(img, (SIZE * cell_size, SIZE* cell_size), interpolation = cv2.INTER_NEAREST)
+
+    # add lines
+    for i in range(1, SIZE) :
+        img = cv2.line(img, (0, i * cell_size), (SIZE * cell_size, i * cell_size), (0, 0, 0), 2)
+        img = cv2.line(img, (i * cell_size, 0), (i * cell_size, SIZE * cell_size), (0, 0, 0), 2)
+
+    #convert to RGB
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)            
+
+    #display the board
     cv2.imshow("Othello", img)
-    key = cv2.waitKey(1) &  0xFF
-    if key == ord('q'):
+
+    #add mouse click event to play
+    if interactable :
+        cv2.setMouseCallback("Othello", mouse_event_checker, [cell_size, board, possible_moves])
+
+    key = cv2.waitKey(10)
+
+    if key == ord("q") :
         cv2.destroyAllWindows()
-        exit()
-        
-    if display_only:
-        if last_display:
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
-        return
-    # Wait for the user to click on a cell
-    x, y = cv2_setMouseCallback(size, img)
-    while (x, y) not in moves_x_y_only:
-        x, y = cv2_setMouseCallback(size, img)
-    cv2.destroyAllWindows()
-    for move in moves:
-        if move[0] == x and move[1] == y:
-            return move
-    return None
+        exit(0)
+    
 
 
 if __name__ == '__main__':
@@ -256,4 +272,5 @@ if __name__ == '__main__':
         print("[+] Matchs nuls: ", 100 - round(black*100) - round(white*100), "%")
         
     else:
-        start_game(0)
+        GAME_TYPE = int(input("Type de jeu (1: joueur vs joueur, 2: joueur vs IA (IA=Noirs), 2: joueur vs IA (IA=Blancs), 0: IA vs IA): "))
+        start_game(GAME_TYPE)

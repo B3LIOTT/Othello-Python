@@ -1,13 +1,14 @@
 
 import numpy as np
 
-DEBUG=True
-ANALYSE=False
+DEBUG=False
+ANALYSE=True
+NB_ITERATIONS=10000
 
 # GAME
 SIZE = 8
 SLEEP_TIME = 0
-ALG_TYPE = 1
+ALG_TYPE = 0
 
 # IA
 MAX_DEPTH = 3

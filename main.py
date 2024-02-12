@@ -9,7 +9,7 @@ from ai_player import AIPlayer
 from time import sleep
 import cv2
 import numpy as np
-
+import time
 
 
 def play(x: int, y: int, board: Board, move):
@@ -38,7 +38,7 @@ def is_possible(pm: list, x: int, y: int):
     return False, -1
 
 # TODO: fix
-def process_input(Player: Player, board: Board):
+def process_input(Player: Player, board: Board, display: bool):
     """
     Traite l'entrée du joueur
 
@@ -56,9 +56,10 @@ def process_input(Player: Player, board: Board):
         CAN_MOVE[Player.type-1] = False
         return
     
-    opencv_display(board, pm, Player.type, interactable = True)
+    if display:
+        opencv_display(board, pm, Player.type, interactable = True)
 
-def process_input_ai(AIPlayer: AIPlayer, board: Board):
+def process_input_ai(AIPlayer: AIPlayer, board: Board, display: bool):
     """
     Traite l'entrée de l'IA
 
@@ -72,7 +73,9 @@ def process_input_ai(AIPlayer: AIPlayer, board: Board):
         CAN_MOVE[AIPlayer.type-1] = False
         return
     
-    opencv_display(board, pm, AIPlayer.type, interactable = False)
+    if display:
+        opencv_display(board, pm, AIPlayer.type, interactable = False)
+
     rand_move = AIPlayer.play(board, ALG_TYPE, pm)
 
     if DEBUG:
@@ -81,7 +84,7 @@ def process_input_ai(AIPlayer: AIPlayer, board: Board):
         
     board.update_state(rand_move, AIPlayer.type, rand_move[0], rand_move[1])
 
-def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlayer):
+def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlayer, display: bool):
     """
     Boucle principale du jeu
 
@@ -93,30 +96,36 @@ def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlay
     global CAN_MOVE
     CAN_MOVE = [True, True]
 
+    if ANALYSE:
+        start_time = time.time()
+
     i = 0
     while CAN_MOVE[0] or CAN_MOVE[1]:
         CAN_MOVE[i%2] = True
-        print("Tour: ", i+1)
+        if DEBUG:
+            print("Tour: ", i+1)
 
         if i%2 == 0:
             if type(Player1) == AIPlayer:
-                process_input_ai(Player1, board)
+                process_input_ai(Player1, board, display)
                 sleep(SLEEP_TIME)
             else:
-                process_input(Player1, board)
+                process_input(Player1, board, display)
 
         else:
             if type(Player2) == AIPlayer:
-                process_input_ai(Player2, board)
+                process_input_ai(Player2, board, display)
                 sleep(SLEEP_TIME)
             else:
-                process_input(Player2, board)
+                process_input(Player2, board, display)
         
         i += 1
     
-    game_over(board)
 
-def start_game(type: int):
+    delta = time.time() - start_time
+    return game_over(board, delta)
+
+def start_game(type: int, display: bool = True):
     """
     Démarre le jeu
 
@@ -138,9 +147,9 @@ def start_game(type: int):
         p2 = AIPlayer(2)
     
     print("[+] Debug mode activated: ", DEBUG)
-    game_loop(board, p1, p2)
+    return game_loop(board, p1, p2, display)
 
-def game_over(board: Board):
+def game_over(board: Board, delta: float):
     """
     Affiche le vainqueur
 
@@ -158,8 +167,13 @@ def game_over(board: Board):
         print("[+] Les blancs gagnent")
     else:
         print("[+] Match nul")
+    
+    if ANALYSE:
+        print("[+] Temps de jeu: ", delta)
+    
+    return delta
 
-        
+
 
 # UI
 def mouse_click_event(event, x, y, flags, params):
@@ -223,4 +237,12 @@ def opencv_display(board: Board, possible_moves: list, type:int, interactable : 
 
 
 if __name__ == '__main__':
-    start_game(0)
+    if ANALYSE:
+        mean = 0
+        for i in range(NB_ITERATIONS):
+            mean += start_game(0, display=False)/NB_ITERATIONS
+        
+        print("[+] Moyenne: ", mean)
+            
+    else:
+        start_game(0, display=True)

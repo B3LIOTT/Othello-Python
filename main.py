@@ -12,14 +12,14 @@ import numpy as np
 import time
 
 
-def play(x: int, y: int, board: Board, move):
+def play(x: int, y: int, board: Board, move, type: int):
     """
     Joue un coup
 
     :param x: coordonnée x
     :param y: coordonnée y
     """
-    board.update_state(move, Player.type, x, y) 
+    board.update_state(move, type, x, y) 
 
 def is_possible(pm: list, x: int, y: int):
     """
@@ -37,7 +37,6 @@ def is_possible(pm: list, x: int, y: int):
         
     return False, -1
 
-# TODO: fix
 def process_input(Player: Player, board: Board):
     """
     Traite l'entrée du joueur
@@ -56,9 +55,9 @@ def process_input(Player: Player, board: Board):
         CAN_MOVE[Player.type-1] = False
         return
     
-    if DISPLAY:
+    if not ANALYSE and DISPLAY:
         opencv_display(board, pm, Player.type, interactable = True)
-
+    
 def process_input_ai(AIPlayer: AIPlayer, board: Board):
     """
     Traite l'entrée de l'IA
@@ -73,7 +72,7 @@ def process_input_ai(AIPlayer: AIPlayer, board: Board):
         CAN_MOVE[AIPlayer.type-1] = False
         return
     
-    if DISPLAY:
+    if not ANALYSE and DISPLAY:
         opencv_display(board, pm, AIPlayer.type, interactable = False)
 
     rand_move = AIPlayer.play(board, ALG_TYPE, pm)
@@ -108,14 +107,12 @@ def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlay
         if i%2 == 0:
             if type(Player1) == AIPlayer:
                 process_input_ai(Player1, board)
-                sleep(SLEEP_TIME)
             else:
                 process_input(Player1, board)
 
         else:
             if type(Player2) == AIPlayer:
                 process_input_ai(Player2, board)
-                sleep(SLEEP_TIME)
             else:
                 process_input(Player2, board)
         
@@ -128,7 +125,7 @@ def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlay
     
     return game_over(board, delta)
 
-def start_game(type: int):
+def start_game(TYPE: int = GAME_TYPE):
     """
     Démarre le jeu
 
@@ -136,13 +133,13 @@ def start_game(type: int):
     """
     board = Board()
 
-    if type == 1:
+    if TYPE == 1:
         p1 = Player(1)
         p2 = Player(2)
-    elif type == 2:
+    elif TYPE == 2:
         p1 = AIPlayer(1)
         p2 = Player(2)
-    elif type == 3:
+    elif TYPE == 3:
         p1 = Player(1)
         p2 = AIPlayer(2)
     else:
@@ -188,24 +185,30 @@ def game_over(board: Board, delta: float):
 
 
 # UI
-def mouse_event_checker(img: np.ndarray):
-    x = -1
-    y = -1
-    def mouse_callback(event, x_, y_, flags, param):
-        board, pm = param
+def mouse_callback_process(possible_moves):
+
+    x = None
+    y = None
+    def mouse_callback(event, _x, _y, flags, param):
         nonlocal x, y
         if event == cv2.EVENT_LBUTTONDOWN:
-            y = x_//100
-            x = y_//100
-            play(x, y, board, pm[is_possible(pm, x, y)[1]])
+            y = _x // cell_size
+            x = _y // cell_size
 
+    
     cv2.setMouseCallback("Othello", mouse_callback)
-
-    while True:
-        cv2.imshow("Othello", img)
-        if x != -1 and y != -1:
-            break
+    
+    while not (m:=is_possible(possible_moves, x, y))[0]:
         cv2.waitKey(1)
+    
+    #cv2.destroyAllWindows()
+        
+    if DEBUG:
+        print("[+] Click: ", x, y)          
+        print("[+] Details: ", possible_moves[m[1]])
+
+    return x, y, possible_moves[m[1]]
+
 
 
 def opencv_display(board: Board, possible_moves: list, type:int, interactable : bool = True):
@@ -242,16 +245,10 @@ def opencv_display(board: Board, possible_moves: list, type:int, interactable : 
     #display the board
     cv2.imshow("Othello", img)
 
-    #add mouse click event to play
-    if interactable :
-        cv2.setMouseCallback("Othello", mouse_event_checker, [board, possible_moves])
-
-    key = cv2.waitKey(10)
-
-    if key == ord("q") :
-        cv2.destroyAllWindows()
-        exit(0)
-    
+    if interactable:
+        x, y, move = mouse_callback_process(possible_moves)
+        play(x, y, board, move, type)
+        
 
 
 if __name__ == '__main__':
@@ -272,5 +269,5 @@ if __name__ == '__main__':
         print("[+] Matchs nuls: ", 100 - round(black*100) - round(white*100), "%")
         
     else:
-        GAME_TYPE = int(input("Type de jeu (1: joueur vs joueur, 2: joueur vs IA (IA=Noirs), 2: joueur vs IA (IA=Blancs), 0: IA vs IA): "))
-        start_game(GAME_TYPE)
+        print("[+] Type de jeu: ", GAME_TYPE)
+        start_game()

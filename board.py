@@ -61,13 +61,16 @@ class Board:
         
         for i in range(len(data[2])):
             pm = data[2][i]
+            current_x = x
+            current_y = y
 
             if pm[0]:
-                end_x, end_y = pm[3]
-                current_x, current_y = pm[1]
-                dx, dy = pm[2]
+                dx, dy = pm[1]
+                end_x, end_y = pm[2]
+                current_x += dx
+                current_y += dy
 
-                while current_x != end_x or current_y != end_y:
+                while (current_x, current_y) != (end_x, end_y):
                     self.game_array[current_x, current_y] = type
                     current_x += dx
                     current_y += dy
@@ -106,22 +109,18 @@ class Board:
             return res_l
     
         directions = [(0, 1), (1, 0), (1, 1), (1, -1), (0, -1), (-1, 0), (-1, -1), (-1, 1)]
-        for k in self.range_size:
+        for k in range(len(directions)):
             dx, dy = directions[k]
-
             current_x, current_y = x + dx, y + dy
-            opposite = (None, None)
 
+            if not (0 <= current_x < SIZE and 0 <= current_y < SIZE) or self.game_array[current_x, current_y] != self.other_type(type):
+                continue
+            
             while 0 <= current_x < SIZE and 0 <= current_y < SIZE:
-                if self.game_array[current_x, current_y] == self.other_type(type):
-                    opposite = (current_x, current_y)
-
-                elif self.game_array[current_x, current_y] == type and opposite != (None, None):
-                    res_l[k] = [True, opposite, (dx, dy), (current_x, current_y)]
+                if self.game_array[current_x, current_y] == type:
+                    res_l[k] = [True, (dx, dy), (current_x, current_y)]
                     break
-                else:
-                    break
-
+                
                 current_x += dx
                 current_y += dy
 

@@ -100,7 +100,7 @@ def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlay
         start_time = time.time()
 
     i = 0
-    while CAN_MOVE[0] and CAN_MOVE[1]:
+    while CAN_MOVE[0] or CAN_MOVE[1]:
         CAN_MOVE[i%2] = True
         if DEBUG:
             print("Tour: ", i+1)
@@ -190,7 +190,52 @@ def mouse_click_event(event, x, y, flags, params):
 
 
 def opencv_display(board: Board, possible_moves: list, type:int, interactable : bool = True) :
-    raise NotImplementedError
+
+    img = np.zeros((SIZE, SIZE, 3), dtype=np.uint8)
+    moves_x_y_only = [(move[0], move[1]) for move in list(moves)]
+    
+    # Set the background color
+    img[:] = background
+    # Change the background color for the adjacent cells
+    if adj_cells is not None:
+        for cell in adj_cells:
+            cv2.rectangle(img, (cell[1]*100, cell[0]*100), (cell[1]*100+100, cell[0]*100+100), (0, 160, 0), -1)
+    
+    # Add pieces (circles)
+    for i in range(size):
+        for j in range(size):
+            if board[i][j] == 1:
+                cv2.circle(img, (j*100+50, i*100+50), 40, (255, 255, 255), -1)
+            elif board[i][j] == -1:
+                cv2.circle(img, (j*100+50, i*100+50), 40, (0, 0, 0), -1)
+    # Add possible moves in grey (circles)
+    for move in moves_x_y_only:
+        cv2.circle(img, (move[1]*100+50, move[0]*100+50), 40, (128, 128, 128), -1)
+    # Add grid lines
+    for i in range(0, size):
+        cv2.line(img, (0, i*100), (height, i*100), (0, 0, 0), 1)
+        cv2.line(img, (i*100, 0), (i*100, width), (0, 0, 0), 1)     
+    
+    cv2.imshow("Othello", img)
+    key = cv2.waitKey(1) &  0xFF
+    if key == ord('q'):
+        cv2.destroyAllWindows()
+        exit()
+        
+    if display_only:
+        if last_display:
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+        return
+    # Wait for the user to click on a cell
+    x, y = cv2_setMouseCallback(size, img)
+    while (x, y) not in moves_x_y_only:
+        x, y = cv2_setMouseCallback(size, img)
+    cv2.destroyAllWindows()
+    for move in moves:
+        if move[0] == x and move[1] == y:
+            return move
+    return None
 
 
 if __name__ == '__main__':

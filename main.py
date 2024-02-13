@@ -199,7 +199,7 @@ def mouse_callback_process(possible_moves):
     cv2.setMouseCallback("Othello", mouse_callback)
     
     while not (m:=is_possible(possible_moves, x, y))[0]:
-        cv2.waitKey(1)
+        cv2.waitKey(10)
     
     #cv2.destroyAllWindows()
         

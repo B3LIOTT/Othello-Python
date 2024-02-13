@@ -75,13 +75,13 @@ def process_input_ai(AIPlayer: AIPlayer, board: Board):
     if not ANALYSE and DISPLAY:
         opencv_display(board, pm, AIPlayer.type, interactable = False)
 
-    rand_move = AIPlayer.play(board, ALGS[AIPlayer.type-1], pm)
+    move = AIPlayer.play(board, ALGS[AIPlayer.type-1], pm)
 
     if DEBUG:
-        print("[+] Coup IA: ", rand_move[0],  rand_move[1], AIPlayer.type)
-        print("[+] Details: ", rand_move)
+        print("[+] Coup IA: ", move[0],  move[1], AIPlayer.type)
+        print("[+] Details: ", move)
         
-    board.update_state(rand_move, AIPlayer.type, rand_move[0], rand_move[1])
+    board.update_state(move, AIPlayer.type, move[0], move[1])
 
 def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlayer):
     """
@@ -208,8 +208,6 @@ def mouse_callback_process(possible_moves):
         print("[+] Details: ", possible_moves[m[1]])
 
     return x, y, possible_moves[m[1]]
-
-
 
 def opencv_display(board: Board, possible_moves: list, type:int, interactable : bool = True):
 

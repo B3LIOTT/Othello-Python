@@ -38,7 +38,7 @@ class Board:
     
 
 
-    def update_adjacents(self, x, y):
+    def update_adjacents(self, x: int, y: int):
         """
         Met à jour les cases adjacentes à (x, y) après un coup
         """
@@ -49,9 +49,14 @@ class Board:
                 if self.game_array[x+dx, y+dy] == 0 and (x+dx, y+dy) not in self.adjacents:
                     self.adjacents.append((x+dx, y+dy))
 
-    def update_state(self, data, type, x, y):
+    def update_state(self, data: list, type: int, x: int, y: int):
         """
         Met à jour l'état du plateau
+
+        :param data: données du coup
+        :param type: type de pion
+        :param x: coordonnée x
+        :param y: coordonnée y
         """
         if DEBUG:
             print("[+] updating state")

@@ -2,18 +2,18 @@
 import numpy as np
 
 DEBUG=False
-ANALYSE=False
+ANALYSE=True
 NB_ITERATIONS=10
 DISPLAY=True
 
 # GAME
 SIZE = 8
 SLEEP_TIME = 0
-ALGS = [0, 0]
-GAME_TYPE = 1
+ALGS = [0, 1]
+GAME_TYPE = 0
 
 # IA
-MAX_DEPTH = 3
+MAX_DEPTH = 5
 H1 = np.array(
     [
         [500, -150, 30, 10, 10, 30, -150, 500],

@@ -24,7 +24,7 @@ class AIPlayer:
         elif alg_type == 1:
             copy = board.copy()
             nm = self.negamax(copy, 0)
-            return nm[1][0], nm[1][1]
+            return nm[1]
         elif alg_type == 2:
             return self.alpha_beta()
         else:

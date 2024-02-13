@@ -9,7 +9,7 @@ DISPLAY=True
 # GAME
 SIZE = 8
 SLEEP_TIME = 0
-ALG_TYPE = 0
+ALGS = [0, 0]
 GAME_TYPE = 0
 
 # IA

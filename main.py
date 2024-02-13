@@ -75,7 +75,7 @@ def process_input_ai(AIPlayer: AIPlayer, board: Board):
     if not ANALYSE and DISPLAY:
         opencv_display(board, pm, AIPlayer.type, interactable = False)
 
-    rand_move = AIPlayer.play(board, ALG_TYPE, pm)
+    rand_move = AIPlayer.play(board, ALGS[AIPlayer.type-1], pm)
 
     if DEBUG:
         print("[+] Coup IA: ", rand_move[0],  rand_move[1], AIPlayer.type)

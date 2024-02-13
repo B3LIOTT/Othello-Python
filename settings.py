@@ -2,7 +2,7 @@
 import numpy as np
 
 DEBUG=False
-ANALYSE=True
+ANALYSE=False       # ANALYSE = True passe automatiquement DISPLAY à False pour éviter les problèmes de performance
 NB_ITERATIONS=10
 DISPLAY=True
 
@@ -10,10 +10,11 @@ DISPLAY=True
 SIZE = 8
 SLEEP_TIME = 0
 ALGS = [0, 1]
-GAME_TYPE = 0
+GAME_TYPE = 3
+MAX_INT = np.iinfo(np.int16).max
 
 # IA
-MAX_DEPTH = 5
+MAX_DEPTH = 4
 H1 = np.array(
     [
         [500, -150, 30, 10, 10, 30, -150, 500],

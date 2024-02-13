@@ -19,11 +19,12 @@ class AIPlayer:
 
         :return: coordonnées du coup
         """
+
         if alg_type == 0:
             return self.random_play(pm)
         elif alg_type == 1:
             copy = board.copy()
-            nm = self.negamax(copy, 0)
+            nm = self.negamax(copy, 0, pm)
             return nm[1]
         elif alg_type == 2:
             return self.alpha_beta()
@@ -43,7 +44,7 @@ class AIPlayer:
     def minimax(self):
         raise NotImplementedError
     
-    def negamax(self, board: Board, depth: int):
+    def negamax(self, board: Board, depth: int, pm: list):
         """
         Joue un coup en utilisant l'algorithme negamax
 
@@ -53,25 +54,30 @@ class AIPlayer:
         if depth == MAX_DEPTH or len(board.adjacents) == 0:
             return [heuristic(board.game_array, self.type)]
         
-        moves = board.possible_moves(self.type)
+        if depth != 0:
+            moves = board.possible_moves(self.type)
+        else:
+            moves = pm
 
         if len(moves) == 0:
             return [heuristic(board.game_array, self.type)]
         
-        best = -m.inf
-        best_move = None
+        best = -MAX_INT
+        best_moves = []
+
         for move in moves:
             board_copy = board.copy()
-            board.update_state(move, self.type, move[0], move[1]) 
-            score = -self.negamax(board_copy, depth+1)[0]
+            board_copy.update_state(move, self.type, move[0], move[1]) 
+            score = -self.negamax(board_copy, depth+1, moves)[0]
 
-            if score == best and random.choice([True, False]):  
-                best_move = move
+            if score == best:  
+                best_moves.append(move)
 
             if score > best:
                 best = score
-                best_move = move
-        
+                best_moves = [move]
+
+        best_move = random.choice(best_moves)
         return best, best_move
         
 

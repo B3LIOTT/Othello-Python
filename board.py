@@ -90,7 +90,7 @@ class Board:
         for adj in self.adjacents:
             x, y = adj
             check = self.check_lines(x, y, type)
-            successes = [check[i][0] for i in self.range_size]
+            successes = [check[i][0] for i in self.range_size] # TODO: retourner les coups possibles uniquement
             if successes.__contains__(True):
                 moves.append((x, y, check))
 
@@ -122,6 +122,8 @@ class Board:
                 continue
             
             while 0 <= current_x < SIZE and 0 <= current_y < SIZE:
+                if self.game_array[current_x, current_y] == 0:
+                    break
                 if self.game_array[current_x, current_y] == type:
                     res_l[k] = [True, (dx, dy), (current_x, current_y)]
                     break

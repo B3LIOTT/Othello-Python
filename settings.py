@@ -9,7 +9,7 @@ DISPLAY=True
 # GAME
 SIZE = 8
 SLEEP_TIME = 0
-ALGS = [0, 1]
+ALGS = [1, 1]
 GAME_TYPE = 3
 MAX_INT = np.iinfo(np.int16).max
 

@@ -97,7 +97,9 @@ def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlay
 
     if ANALYSE:
         start_time = time.time()
-
+    
+    play_times = 0
+    delta = None    
     i = 0
     while CAN_MOVE[0] or CAN_MOVE[1]:
         CAN_MOVE[i%2] = True
@@ -105,25 +107,33 @@ def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlay
             print("Tour: ", i+1)
 
         if i%2 == 0:
+            if ANALYSE_EACH_PLAY:
+                start_time_i = time.time()
+                
             if type(Player1) == AIPlayer:
                 process_input_ai(Player1, board)
             else:
                 process_input(Player1, board)
+            
+            if ANALYSE_EACH_PLAY:
+                play_times += time.time() - start_time_i
 
         else:
             if type(Player2) == AIPlayer:
                 process_input_ai(Player2, board)
             else:
                 process_input(Player2, board)
-        
+    
+
         i += 1
     
     if ANALYSE:
         delta = time.time() - start_time
-    else:
-        delta = None
+
+    if ANALYSE_EACH_PLAY:
+         play_times /= (i+1)/2
     
-    return game_over(board, delta)
+    return game_over(board, delta, play_times)
 
 def start_game(TYPE: int = GAME_TYPE):
     """
@@ -152,13 +162,13 @@ def start_game(TYPE: int = GAME_TYPE):
 
     return game_loop(board, p1, p2)
 
-def game_over(board: Board, delta: float):
+def game_over(board: Board, delta: float, play_times: float):
     """
     Affiche le vainqueur
 
     :param board: plateau
     """
-    print("[+]---- Fin de la partie ---- ")
+    print("[-]---- Fin de la partie ---- ")
     nb_discs_p1 = np.sum(board.game_array == 1)
     nb_discs_p2 = np.sum(board.game_array == 2)
 
@@ -179,8 +189,10 @@ def game_over(board: Board, delta: float):
     
     if ANALYSE:
         print("[+] Temps de jeu: ", delta, "s")
+    if ANALYSE_EACH_PLAY:
+        print("[+] Temps moyen par coup du joueur noir: ", play_times, "s")
     
-    return delta, black, white
+    return delta, black, white, play_times
 
 
 
@@ -251,20 +263,22 @@ def opencv_display(board: Board, possible_moves: list, type:int, interactable : 
         cv2.waitKey(10) # pour ralentir l'affichage, sinon c'est trop rapide et rien ne s'affiche
         
 
-
-if __name__ == '__main__':
+def run():
     if ANALYSE:
         mean = 0
         black = 0
         white = 0
+        each_mean = 0
         for i in range(NB_ITERATIONS):
             res = start_game(0)
             mean += res[0]/NB_ITERATIONS
+            each_mean += res[3]/NB_ITERATIONS
             black += res[1]/NB_ITERATIONS
             white += res[2]/NB_ITERATIONS
         
-        print("-----------------------------")
+        print("[-]--------------------------")
         print("[+] Moyenne: ", mean, "s")
+        print("[+] Moyenne des coup du joueur noir: ", each_mean, "s")
         print("[+] Victoires des noirs: ", round(black*100), "%")
         print("[+] Victoires des blancs: ", round(white*100), "%")
         print("[+] Matchs nuls: ", 100 - round(black*100) - round(white*100), "%")
@@ -272,3 +286,7 @@ if __name__ == '__main__':
     else:
         print("[+] Type de jeu: ", GAME_TYPE)
         start_game()
+
+
+if __name__ == "__main__":
+    run()

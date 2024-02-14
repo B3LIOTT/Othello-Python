@@ -23,14 +23,30 @@ class AIPlayer:
         if alg_type == 0:
             return self.random_play(pm)
         elif alg_type == 1:
-            copy = board.copy()
-            nm = self.negamax(copy, 0, pm)
+            nm = self.negamax(board, 0, pm)
             return nm[1]
         elif alg_type == 2:
-            return self.alpha_beta()
+            if MAX_DEPTH %2 != 0:
+                raise ValueError("[!] MAX_DEPTH doit être pair pour l'algorithme alpha_beta")
+            return self.nega_alpha_beta(board, 0, pm, -MAX_INT, MAX_INT)[1]
         else:
             raise ValueError("[!] Invalid algorithm type")
 
+    def strat(self, board: np.ndarray, pm: list):
+        if STRATS[self.type-1] == 0:
+            return [heuristic(board, self.type)]
+        
+        elif STRATS[self.type-1] == 1:
+             return [np.sum(board == self.type) - np.sum(board == self.other_type(self.type))]
+        
+        elif STRATS[self.type-1] == 2:
+            return [len(pm) - len(board.possible_moves(self.other_type(self.type)))]
+        
+        elif STRATS[self.type-1] == 3:
+            raise NotImplementedError
+        else:
+            raise ValueError("[!] Invalid strategy type")
+        
 
     def random_play(self, pm: list):
         """
@@ -44,16 +60,56 @@ class AIPlayer:
     def minimax(self):
         raise NotImplementedError
     
+    def nega_alpha_beta(self, board: Board, depth: int, pm: list, alpha: int, beta: int):
+        """
+        Joue un coup en utilisant l'algorithme negamax
+
+        :param board: plateau de jeu
+        """
+        if depth == MAX_DEPTH or len(board.adjacents) == 0:
+            return self.strat(board.game_array, pm)
+
+        if depth != 0:
+            moves = board.possible_moves(self.type)
+        else:
+            moves = pm
+
+        if len(moves) == 0:
+            return self.strat(board.game_array, pm)
+        
+        best = -MAX_INT
+        best_moves = []
+
+        for move in moves:
+            board_copy = board.copy()
+            board_copy.update_state(move, self.type, move[0], move[1]) 
+            score = -self.nega_alpha_beta(board_copy, depth+1, moves, -beta, -alpha)[0]
+
+            if score == best:  
+                best_moves.append(move)
+
+            if score > best:
+                best = score
+                best_moves = [move]
+                if best > alpha:
+                    alpha = best
+                    if alpha > beta:
+                        break
+
+        best_move = random.choice(best_moves)
+        return best, best_move
+        
+        
+
     def negamax(self, board: Board, depth: int, pm: list):
         """
         Joue un coup en utilisant l'algorithme negamax
 
         :param board: plateau de jeu
         """
-
         if depth == MAX_DEPTH or len(board.adjacents) == 0:
             return [heuristic(board.game_array, self.type)]
-        
+
         if depth != 0:
             moves = board.possible_moves(self.type)
         else:
@@ -61,7 +117,7 @@ class AIPlayer:
 
         if len(moves) == 0:
             return [heuristic(board.game_array, self.type)]
-        
+
         best = -MAX_INT
         best_moves = []
 
@@ -79,10 +135,6 @@ class AIPlayer:
 
         best_move = random.choice(best_moves)
         return best, best_move
-        
-
-    def alpha_beta(self):
-        raise NotImplementedError
     
 
     def other_type(self, type:int):

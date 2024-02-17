@@ -19,7 +19,7 @@ def play(x: int, y: int, board: Board, move, type: int):
     :param x: coordonnée x
     :param y: coordonnée y
     """
-    board.update_state(move, type, x, y) 
+    board.update_state(move, type) 
 
 def is_possible(pm: list, x: int, y: int):
     """
@@ -81,7 +81,7 @@ def process_input_ai(AIPlayer: AIPlayer, board: Board):
         print("[+] Coup IA: ", move[0],  move[1], AIPlayer.type)
         print("[+] Details: ", move)
         
-    board.update_state(move, AIPlayer.type, move[0], move[1])
+    board.update_state(move, AIPlayer.type)
 
 def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlayer):
     """

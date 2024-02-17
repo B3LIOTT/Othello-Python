@@ -49,7 +49,7 @@ class Board:
                 if self.game_array[x+dx, y+dy] == 0 and (x+dx, y+dy) not in self.adjacents:
                     self.adjacents.append((x+dx, y+dy))
 
-    def update_state(self, data: list, type: int, x: int, y: int):
+    def update_state(self, data: list, type: int):
         """
         Met à jour l'état du plateau
 
@@ -58,6 +58,8 @@ class Board:
         :param x: coordonnée x
         :param y: coordonnée y
         """
+        x, y = data[0], data[1]
+
         if DEBUG:
             print("[+] updating state")
         
@@ -69,16 +71,15 @@ class Board:
             current_x = x
             current_y = y
 
-            if pm[0]:
-                dx, dy = pm[1]
-                end_x, end_y = pm[2]
+            dx, dy = pm[0]
+            end_x, end_y = pm[1]
+            current_x += dx
+            current_y += dy
+
+            while (current_x, current_y) != (end_x, end_y):
+                self.game_array[current_x, current_y] = type
                 current_x += dx
                 current_y += dy
-
-                while (current_x, current_y) != (end_x, end_y):
-                    self.game_array[current_x, current_y] = type
-                    current_x += dx
-                    current_y += dy
   
     def possible_moves(self, type:int):
         """
@@ -90,8 +91,7 @@ class Board:
         for adj in self.adjacents:
             x, y = adj
             check = self.check_lines(x, y, type)
-            successes = [check[i][0] for i in self.range_size] # TODO: retourner les coups possibles uniquement
-            if successes.__contains__(True):
+            if check != []: 
                 moves.append((x, y, check))
 
         return moves
@@ -108,7 +108,7 @@ class Board:
         :return: liste des coups possibles avec leurs caractéristiques (comme la direction par exemple)
         """
 
-        res_l = [[False, None, None, None]]*SIZE
+        res_l = []
 
         if (x, y) not in self.adjacents:
             return res_l
@@ -125,7 +125,7 @@ class Board:
                 if self.game_array[current_x, current_y] == 0:
                     break
                 if self.game_array[current_x, current_y] == type:
-                    res_l[k] = [True, (dx, dy), (current_x, current_y)]
+                    res_l.append([(dx, dy), (current_x, current_y)])
                     break
                 
                 current_x += dx

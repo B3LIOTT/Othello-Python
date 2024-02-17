@@ -2,8 +2,8 @@
 import numpy as np
 
 DEBUG=False
-ANALYSE=False               # ANALYSE_* = True passe automatiquement DISPLAY à False pour éviter les problèmes de performance
-ANALYSE_EACH_PLAY=False     # Uniquement pour le joueur 1
+ANALYSE=False              # ANALYSE_* = True passe automatiquement DISPLAY à False pour éviter les problèmes de performance
+ANALYSE_EACH_PLAY=True     # Uniquement pour le joueur 1
 NB_ITERATIONS=10
 DISPLAY=True
 
@@ -16,7 +16,7 @@ GAME_TYPE = 0              # 1: joueur vs joueur, 2: IA vs joueur, 3: joueur vs 
 MAX_INT = np.iinfo(np.int16).max
 
 # IA
-MAX_DEPTH = 4
+MAX_DEPTH = 6
 H1 = np.array(
     [
         [500, -150, 30, 10, 10, 30, -150, 500],

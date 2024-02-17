@@ -56,9 +56,6 @@ class AIPlayer:
         rand_pm = pm[rand_ind]
 
         return rand_pm
-
-    def minimax(self):
-        raise NotImplementedError
     
     def nega_alpha_beta(self, board: Board, depth: int, pm: list, alpha: int, beta: int):
         """
@@ -79,10 +76,10 @@ class AIPlayer:
         
         best = -MAX_INT
         best_moves = []
-
+        score = 0
         for move in moves:
             board_copy = board.copy()
-            board_copy.update_state(move, self.type, move[0], move[1]) 
+            board_copy.update_state(move, self.type) 
             score = -self.nega_alpha_beta(board_copy, depth+1, moves, -beta, -alpha)[0]
 
             if score == best:  
@@ -120,7 +117,7 @@ class AIPlayer:
 
         best = -MAX_INT
         best_moves = []
-
+        score = 0
         for move in moves:
             board_copy = board.copy()
             board_copy.update_state(move, self.type, move[0], move[1]) 

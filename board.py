@@ -35,16 +35,17 @@ class Board:
             (SIZE // 2 + 1, SIZE // 2),
             (SIZE // 2 + 1, SIZE // 2 + 1)
         ]
-    
+
+        self.directions = [(1,0), (0,1), (-1,0), (0,-1), (1,1), (-1,-1), (1,-1), (-1,1)]
 
 
     def update_adjacents(self, x: int, y: int):
         """
         Met à jour les cases adjacentes à (x, y) après un coup
         """
-        l = [(1,0), (0,1), (-1,0), (0,-1), (1,1), (-1,-1), (1,-1), (-1,1)]
+
         self.adjacents.remove((x, y))
-        for dx, dy in l:
+        for dx, dy in self.directions:
             if 0 <= x+dx < SIZE and 0 <= y+dy < SIZE:
                 if self.game_array[x+dx, y+dy] == 0 and (x+dx, y+dy) not in self.adjacents:
                     self.adjacents.append((x+dx, y+dy))
@@ -113,9 +114,8 @@ class Board:
         if (x, y) not in self.adjacents:
             return res_l
     
-        directions = [(0, 1), (1, 0), (1, 1), (1, -1), (0, -1), (-1, 0), (-1, -1), (-1, 1)]
-        for k in range(len(directions)):
-            dx, dy = directions[k]
+        for k in range(8):
+            dx, dy = self.directions[k]
             current_x, current_y = x + dx, y + dy
 
             if not (0 <= current_x < SIZE and 0 <= current_y < SIZE) or self.game_array[current_x, current_y] != self.other_type(type):

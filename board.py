@@ -91,13 +91,13 @@ class Board:
         moves = []
         for adj in self.adjacents:
             x, y = adj
-            check = self.check_lines(x, y, type)
+            check = self.check_directions(x, y, type)
             if check != []: 
                 moves.append((x, y, check))
 
         return moves
 
-    def check_lines(self, x:int, y:int, type:int):
+    def check_directions(self, x:int, y:int, type:int):
         """
         Vérifie si placer un pion de type 'type' en (x, y) permet d'encadrer au moins un pion adverse
         dans la direction spécifiée. Retourne True si c'est le cas, False sinon.
@@ -110,9 +110,6 @@ class Board:
         """
 
         res_l = []
-
-        if (x, y) not in self.adjacents:
-            return res_l
     
         for k in range(8):
             dx, dy = self.directions[k]

@@ -112,7 +112,7 @@ class Board:
         res_l = []
     
         for k in range(8):
-            dx, dy = self.directions[k]
+            dx, dy = self.directions[k] 
             current_x, current_y = x + dx, y + dy
 
             if not (0 <= current_x < SIZE and 0 <= current_y < SIZE) or self.game_array[current_x, current_y] != self.other_type(type):

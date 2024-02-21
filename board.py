@@ -1,5 +1,5 @@
 import numpy as np
-from settings import *
+from constants import *
 
 
 class Board:

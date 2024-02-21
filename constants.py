@@ -2,7 +2,7 @@
 import numpy as np
 
 DEBUG=False
-ANALYSE=False              # ANALYSE_* = True passe automatiquement DISPLAY à False pour éviter les problèmes de performance
+ANALYSE=True              # ANALYSE_* = True passe automatiquement DISPLAY à False pour éviter les problèmes de performance
 ANALYSE_EACH_PLAY=True     # Uniquement pour le joueur 1
 NB_ITERATIONS=10
 DISPLAY=True
@@ -17,6 +17,8 @@ MAX_INT = np.iinfo(np.int16).max
 
 # IA
 MAX_DEPTH = 4
+MAX_ITER = 100
+C = 2
 H1 = np.array(
     [
         [500, -150, 30, 10, 10, 30, -150, 500],
@@ -43,7 +45,7 @@ H2 = np.array(
     ]
 )
 
-H = H1
+H = [H1, H1]
 
 def heuristic(board: np.ndarray, type: int):
     """
@@ -54,7 +56,8 @@ def heuristic(board: np.ndarray, type: int):
 
     :return: valeur heuristique
     """
-    return np.sum(H[np.where(board == 2)]) if type == 2 else np.sum(H[np.where(board == 1)])
+    return np.sum(H[type-1][np.where(board == 2)]) if type == 2 else np.sum(H[type-1][np.where(board == 1)])
+
 
 # UI
 bg_color = (53, 132, 186)

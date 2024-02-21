@@ -2,7 +2,7 @@
 OTHELLO GAME 
 @Author: Eliott Georges 
 """
-from settings import *
+from constants import *
 from board import Board
 from player import Player
 from ai_player import AIPlayer
@@ -96,7 +96,7 @@ def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlay
     CAN_MOVE = [True, True]
 
     if ANALYSE:
-        start_time = time.time()
+        start_time = time.perf_counter()
     
     play_times = 0
     delta = None    
@@ -108,7 +108,7 @@ def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlay
 
         if i%2 == 0:
             if ANALYSE_EACH_PLAY:
-                start_time_i = time.time()
+                start_time_i = time.perf_counter()
                 
             if type(Player1) == AIPlayer:
                 process_input_ai(Player1, board)
@@ -116,7 +116,7 @@ def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlay
                 process_input(Player1, board)
             
             if ANALYSE_EACH_PLAY:
-                play_times += time.time() - start_time_i
+                play_times += time.perf_counter() - start_time_i
 
         else:
             if type(Player2) == AIPlayer:
@@ -128,7 +128,7 @@ def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlay
         i += 1
     
     if ANALYSE:
-        delta = time.time() - start_time
+        delta = time.perf_counter() - start_time
 
     if ANALYSE_EACH_PLAY:
          play_times /= (i+1)/2

@@ -1,8 +1,9 @@
 from board import Board
-from settings import *
+from constants import *
 import random
 import numpy as np
 import math as m
+import monte_carlo as MC
 
 
 class AIPlayer:
@@ -31,13 +32,14 @@ class AIPlayer:
             return self.nega_alpha_beta(board, 0, pm, -MAX_INT, MAX_INT, self.type)[1]
         else:
             raise ValueError("[!] Invalid algorithm type")
+    
 
-    def strat(self, board: np.ndarray, pm: list, type: int):
+    def strat(self, board: Board, pm: list, type: int):
         if STRATS[type-1] == 0:
             return [heuristic(board, type)]
         
         elif STRATS[type-1] == 1:
-             return [np.sum(board == type) - np.sum(board == self.other_type(type))]
+                return [np.sum(board == type) - np.sum(board == self.other_type(type))]
         
         elif STRATS[type-1] == 2:
             return [len(pm) - len(board.possible_moves(self.other_type(type)))]
@@ -105,7 +107,7 @@ class AIPlayer:
         :param board: plateau de jeu
         """
         if depth == MAX_DEPTH or len(board.adjacents) == 0:
-            return [heuristic(board.game_array, type)]
+            return self.strat(board.game_array, pm, type)
 
         if depth != 0:
             moves = board.possible_moves(type)
@@ -113,7 +115,7 @@ class AIPlayer:
             moves = pm
 
         if len(moves) == 0:
-            return [heuristic(board.game_array, type)]
+            return self.strat(board.game_array, pm, type)
 
         best = -MAX_INT
         best_moves = []
@@ -133,6 +135,14 @@ class AIPlayer:
         best_move = random.choice(best_moves)
         return best, best_move
     
+
+    def monte_carlo(self, board: Board, pm: list, type: int):
+        """
+        Joue un coup en utilisant l'algorithme monte carlo
+        """
+        return MC.monte_carlo(board, pm, type)
+
+
 
     def other_type(self, type:int):
         """

@@ -276,7 +276,8 @@ def run():
             black += res[1]/NB_ITERATIONS
             white += res[2]/NB_ITERATIONS
         
-        print("[-]--------------------------")
+        print("[-]--------------------------------------------------------")
+        print("[+] Nombre d'itérations: ", NB_ITERATIONS)
         print("[+] Moyenne: ", mean, "s")
         print("[+] Moyenne des coup du joueur noir: ", each_mean, "s")
         print("[+] Victoires des noirs: ", round(black*100), "%")

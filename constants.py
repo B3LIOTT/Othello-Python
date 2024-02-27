@@ -4,19 +4,19 @@ import numpy as np
 DEBUG=False
 ANALYSE=True              # ANALYSE_* = True passe automatiquement DISPLAY à False pour éviter les problèmes de performance
 ANALYSE_EACH_PLAY=True     # Uniquement pour le joueur 1
-NB_ITERATIONS=1000
+NB_ITERATIONS=10
 DISPLAY=True
 
 # GAME
 SIZE = 8
 SLEEP_TIME = 0
-ALGS = [0, 0]              # 0: random, 1: negamax, 2: nega_alpha_beta
+ALGS = [2, 0]              # 0: random, 1: negamax, 2: nega_alpha_beta
 STRATS = [0, 0]            # 0: positionnel, 1: absolu, 2: mobilité, 3: mixte
 GAME_TYPE = 0              # 1: joueur vs joueur, 2: IA vs joueur, 3: joueur vs IA, IA vs IA sinon
 MAX_INT = np.iinfo(np.int16).max
 
 # IA
-MAX_DEPTH = 4
+MAX_DEPTH = 6
 MAX_ITER = 100
 C = 2
 H1 = np.array(
@@ -58,6 +58,26 @@ def heuristic(board: np.ndarray, type: int):
     """
     return np.sum(H[type-1][np.where(board == 2)]) if type == 2 else np.sum(H[type-1][np.where(board == 1)])
 
+def is_win(board: np.ndarray, type: int):
+    """
+    Détermine si le joueur a gagné
+
+    :param board: plateau
+    :param type: type de pion
+
+    :return: True si le joueur a gagné, False sinon
+    """
+    return 1 if len(np.where(board == type)[0]) > len(np.where(board == other_type(type))[0]) else 0
+
+def other_type(type: int):
+    """
+    Retourne le type opposé
+
+    :param type: type de pion
+
+    :return: type opposé
+    """
+    return 3-type
 
 # UI
 bg_color = (53, 132, 186)

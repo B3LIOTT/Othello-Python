@@ -115,7 +115,7 @@ class Board:
             dx, dy = self.directions[k] 
             current_x, current_y = x + dx, y + dy
 
-            if not (0 <= current_x < SIZE and 0 <= current_y < SIZE) or self.game_array[current_x, current_y] != self.other_type(type):
+            if not (0 <= current_x < SIZE and 0 <= current_y < SIZE) or self.game_array[current_x, current_y] != other_type(type):
                 continue
             
             while 0 <= current_x < SIZE and 0 <= current_y < SIZE:
@@ -130,14 +130,6 @@ class Board:
 
         return res_l
     
-    def other_type(self, type:int):
-        """
-        Retourne le conjugué du type de pion
-        """
-        if type == 1:
-            return 2
-        else:
-            return 1
 
     def display_array(self):
         print(self.game_array)

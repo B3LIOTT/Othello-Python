@@ -39,10 +39,10 @@ class AIPlayer:
             return [heuristic(board, type)]
         
         elif STRATS[type-1] == 1:
-                return [np.sum(board == type) - np.sum(board == self.other_type(type))]
+                return [np.sum(board == type) - np.sum(board == other_type(type))]
         
         elif STRATS[type-1] == 2:
-            return [len(pm) - len(board.possible_moves(self.other_type(type)))]
+            return [len(pm) - len(board.possible_moves(other_type(type)))]
         
         elif STRATS[type-1] == 3:
             raise NotImplementedError
@@ -82,7 +82,7 @@ class AIPlayer:
         for move in moves:
             board_copy = board.copy()
             board_copy.update_state(move, type) 
-            score = -self.nega_alpha_beta(board_copy, depth+1, moves, -beta, -alpha, self.other_type(type))[0]
+            score = -self.nega_alpha_beta(board_copy, depth+1, moves, -beta, -alpha, other_type(type))[0]
 
             if score == best:  
                 best_moves.append(move)
@@ -123,7 +123,7 @@ class AIPlayer:
         for move in moves:
             board_copy = board.copy()
             board_copy.update_state(move, type) 
-            score = -self.negamax(board_copy, depth+1, moves, self.other_type(type))[0]
+            score = -self.negamax(board_copy, depth+1, moves, other_type(type))[0]
 
             if score == best:  
                 best_moves.append(move)
@@ -141,14 +141,4 @@ class AIPlayer:
         Joue un coup en utilisant l'algorithme monte carlo
         """
         return MC.monte_carlo(board, pm, type)
-
-
-
-    def other_type(self, type:int):
-        """
-        Retourne le conjugué du type de pion
-        """
-        if type == 1:
-            return 2
-        else:
-            return 1
+    

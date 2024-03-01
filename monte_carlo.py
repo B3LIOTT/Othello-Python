@@ -4,7 +4,7 @@ import random
 import numpy as np
 
 
-def rollout(board: Board, type: int, move: tuple):
+def rollout(board: Board, type: int, move):
     """
     :param board: plateau
     :param type: type de pion
@@ -16,8 +16,8 @@ def rollout(board: Board, type: int, move: tuple):
 
     while True:
         possible_moves = copy_board.possible_moves(type_bis)
-        if len(possible_moves) != 0:
-            move = random.choice(possible_moves)
+        if len(possible_moves) > 0:
+            move = random.choice(possible_moves)  #TODO : utiliser l'heuristique pour choisir le meilleur coup
             copy_board.update_state(move, type_bis)
             type_bis = other_type(type_bis)
 
@@ -25,10 +25,10 @@ def rollout(board: Board, type: int, move: tuple):
             return is_win(copy_board.game_array, type)
 
 
-def expand(board: Board, move: tuple, values: list, ind: int, type: int):
+def expand(board: Board, move, values: list, ind: int, type: int):
     """
     :param board: plateau
-    :param pm: liste des coups possibles
+    :param move: coup
     :param values: liste des valeurs UCB1
     :param ind: indice du coup
     :param type: type de pion
@@ -37,9 +37,8 @@ def expand(board: Board, move: tuple, values: list, ind: int, type: int):
     copy_board = board.copy()
     copy_board.update_state(move, type)
     possible_moves = copy_board.possible_moves(type)
-    l = len(possible_moves)
-    for _ in range(l):  # ajout des nouveaux coups pour le noeud ind
-        values.append((0, 0, MAX_INT, ind)) 
+    for m in possible_moves:  # ajout des nouveaux coups pour le noeud ind
+        values.append((0, 0, MAX_INT, ind, m)) 
     
     return values
 
@@ -95,13 +94,13 @@ def monte_carlo(board: Board, pm: list, type: int):
 
     :return: coordonnées du coup
     """
-    possible_moves = [pm]
     l = len(pm)
-    values = [(0, 0, -1, -1)] + [(0, 0, MAX_INT, 0)] * l  # (ti, ni, ucb1, parent) avec ti = total, ni = nombre de visites, ucb1 = valeur ucb1, parent = indice du parent
+    values = [(0, 0, None, None, None)] + [(0, 0, MAX_INT, 0, m) for m in pm]  # (ti, ni, ucb1, parent, coup) avec ti = total, ni = nombre de visites, ucb1 = valeur ucb1, parent = indice du parent, coup = coordonnées du coup
     offset = 0
+    
     for _ in range(MAX_ITER):  # on part de la racine                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
         if (uv_ind:=contains_unvisited(values[1:], offset)) != -1:  # si il existe au moins un coup non visité, on rollout le premier trouvé (root exclus)
-            move = (pm[uv_ind][0], pm[uv_ind][1])
+            move = values[uv_ind][4]
             r = rollout(board, type, move)
 
             # mise à jour des valeurs du noeud visité
@@ -118,14 +117,14 @@ def monte_carlo(board: Board, pm: list, type: int):
             offset = uv_ind + 1 
 
         else:  # si tous les coups ont été visités au moins une fois
-            for j in range(len(values)):  # on calcule les valeurs UCB1 pour tous les noeuds
+            for j in range(1, l+1):  # on calcule les valeurs UCB1 pour les coups possibles depuis la racine
                 values[j][2] = UCB1(values[j][0], values[j][1], values[0][1])
 
             ind = max_UCB1(values[1:l+1])  # meilleur coup depuis la racine
+            move = values[ind][4]
 
-            move = (pm[ind][0], pm[ind][1])
             values = expand(board, move, values, ind, type)
 
     
     best_move_ind = max_UCB1(values[1:l+1])  # meilleur coup depuis la racine
-    return pm[best_move_ind]
+    return values[best_move_ind][4]

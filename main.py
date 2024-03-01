@@ -288,6 +288,5 @@ def run():
         print("[+] Type de jeu: ", GAME_TYPE)
         start_game()
 
-
-if __name__ == "__main__":
-    run()
+    
+    return mean, black, white, each_mean

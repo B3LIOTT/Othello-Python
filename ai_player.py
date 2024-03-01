@@ -24,11 +24,13 @@ class AIPlayer:
         if alg_type == 0:
             return self.random_play(pm)
         elif alg_type == 1:
+            if MAX_DEPTH %2 != 0:
+                raise ValueError("[!] MAX_DEPTH doit être pair")
             nm = self.negamax(board, 0, pm, self.type)
             return nm[1]
         elif alg_type == 2:
-            if MAX_DEPTH %2 != 0:
-                raise ValueError("[!] MAX_DEPTH doit être pair pour l'algorithme alpha_beta")
+            if MAX_DEPTH %2 != 0:   
+                raise ValueError("[!] MAX_DEPTH doit être pair")
             return self.nega_alpha_beta(board, 0, pm, -MAX_INT, MAX_INT, self.type)[1]
         else:
             raise ValueError("[!] Invalid algorithm type")

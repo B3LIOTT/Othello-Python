@@ -16,7 +16,7 @@ GAME_TYPE = 0              # 1: joueur vs joueur, 2: IA vs joueur, 3: joueur vs 
 MAX_INT = np.iinfo(np.int16).max
 
 # IA
-MAX_DEPTH = 6
+MAX_DEPTH = 4   # pair uniquement
 MAX_ITER = 100
 C = 2
 H1 = np.array(

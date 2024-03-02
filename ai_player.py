@@ -3,7 +3,7 @@ from constants import *
 import random
 import numpy as np
 import math as m
-import monte_carlo as MC
+from monte_carlo import MonteCarloAgent as MCAgent
 
 
 class AIPlayer:
@@ -142,5 +142,6 @@ class AIPlayer:
         """
         Joue un coup en utilisant l'algorithme monte carlo
         """
-        return MC.monte_carlo(board, pm, type)
+        MCA = MCAgent(board=board, pm=pm, type=type)
+        return MCA.monte_carlo()
     

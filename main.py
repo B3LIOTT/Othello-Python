@@ -268,13 +268,13 @@ def run():
         mean = 0
         black = 0
         white = 0
-        each_mean = 0
+        each_mean_black = 0
         accumulated_params = []
         for _ in range(NB_ITERATIONS):
             res = start_game(0)
             accumulated_params.append(res)
             mean += res[0]/NB_ITERATIONS
-            each_mean += res[3]/NB_ITERATIONS
+            each_mean_black += res[3]/NB_ITERATIONS
             black += res[1]/NB_ITERATIONS
             white += res[2]/NB_ITERATIONS
 
@@ -282,15 +282,17 @@ def run():
         print("[-]--------------------------------------------------------")
         print("[+] Nombre d'itérations: ", NB_ITERATIONS)
         print("[+] Moyenne: ", mean, "s")
-        print("[+] Moyenne des coup du joueur noir: ", each_mean, "s")
+        print("[+] Moyenne des coup du joueur noir: ", each_mean_black, "s")
         print("[+] Victoires des noirs: ", round(black*100), "%")
         print("[+] Victoires des blancs: ", round(white*100), "%")
         print("[+] Matchs nuls: ", 100 - round(black*100) - round(white*100), "%")
         
         with open("res.txt", "a") as f:
-            f.write(f"{MAX_DEPTH}:{mean}:{black}:{white}:{each_mean}\n")
+            f.write(f"{MAX_DEPTH}:{mean}:{black}:{white}:{each_mean_black}\n")
 
-        return [mean, black, white, each_mean], accumulated_params
+
+        # TODO: ajouter le temps moyen par coup pour le joueur blanc
+        return [mean, black, white, each_mean_black], accumulated_params
     
     else:
         print("[+] Type de jeu: ", GAME_TYPE)

@@ -75,13 +75,18 @@ class MonteCarlo:
                 for m in pm:
                     sh += H[type-1][m[0], m[1]]+500  # +500 pour rammener les valeurs dans l'intervalle [0, inf[
                 
-                probas = [(H[type-1][m[0], m[1]]+500)/sh for m in pm]
+                probas = []
+                p = 0
+                for m in pm:
+                    p += (H[type-1][m[0], m[1]]+500)/sh
+                    probas.append(p)
+
                 rand = random.uniform(0, 1)
 
                 for i in range(len(probas)):
                     if rand < probas[i]:
                         return pm[i]
-        
+            
         else: # 
             if type == self.type:
                 return random.choice(pm)
@@ -111,7 +116,7 @@ class MonteCarlo:
         while True:  # on "plonge" dans l'arbre aléatoirement
             possible_moves = copy_board.possible_moves(type_bis)
             if len(possible_moves) > 0:
-                move = self.custom_choice(possible_moves, type_bis)  #TODO : utiliser l'heuristique pour choisir le meilleur coup
+                move = self.custom_choice(possible_moves, type_bis)
                 copy_board.update_state(move, type_bis)
                 type_bis = other_type(type_bis)
 

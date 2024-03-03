@@ -3,7 +3,7 @@ from constants import *
 import random
 import numpy as np
 import math as m
-from monte_carlo import MonteCarloAgent as MCAgent
+from monte_carlo import MonteCarlo
 
 
 class AIPlayer:
@@ -32,6 +32,8 @@ class AIPlayer:
             if MAX_DEPTH %2 != 0:   
                 raise ValueError("[!] MAX_DEPTH doit être pair")
             return self.nega_alpha_beta(board, 0, pm, -MAX_INT, MAX_INT, self.type)[1]
+        elif alg_type == 3:
+            return self.monte_carlo(board, pm, self.type)
         else:
             raise ValueError("[!] Invalid algorithm type")
     
@@ -142,6 +144,6 @@ class AIPlayer:
         """
         Joue un coup en utilisant l'algorithme monte carlo
         """
-        MCA = MCAgent(board=board, pm=pm, type=type)
-        return MCA.monte_carlo()
+        MC = MonteCarlo(board=board, pm=pm, type=type)
+        return MC.monte_carlo()
     

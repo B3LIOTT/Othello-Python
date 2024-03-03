@@ -270,7 +270,7 @@ def run():
         white = 0
         each_mean = 0
         accumulated_params = []
-        for i in range(NB_ITERATIONS):
+        for _ in range(NB_ITERATIONS):
             res = start_game(0)
             accumulated_params.append(res)
             mean += res[0]/NB_ITERATIONS
@@ -289,14 +289,12 @@ def run():
         
         with open("res.txt", "a") as f:
             f.write(f"{MAX_DEPTH}:{mean}:{black}:{white}:{each_mean}\n")
-            
-        
+
+        return [mean, black, white, each_mean], accumulated_params
+    
     else:
         print("[+] Type de jeu: ", GAME_TYPE)
         start_game()
-
-    
-    return [mean, black, white, each_mean], accumulated_params
 
 
 if __name__ == "__main__":

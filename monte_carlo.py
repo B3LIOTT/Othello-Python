@@ -70,7 +70,7 @@ class MonteCarlo:
             if type == self.type:
                 return random.choice(pm)
 
-            else: # Choisie le pire coup pour l'adversaire
+            else: # Choisie le meilleur coup pour l'adversaire
                 sh = 0
                 for m in pm:
                     sh += H[type-1][m[0], m[1]]+500  # +500 pour rammener les valeurs dans l'intervalle [0, inf[

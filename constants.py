@@ -4,7 +4,7 @@ import numpy as np
 DEBUG=False
 ANALYSE=True              # ANALYSE_* = True passe automatiquement DISPLAY à False pour éviter les problèmes de performance
 ANALYSE_EACH_PLAY=True     # Uniquement pour le joueur 1
-NB_ITERATIONS=10
+NB_ITERATIONS=5
 DISPLAY=True
 
 # GAME

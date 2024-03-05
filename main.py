@@ -83,6 +83,7 @@ def process_input_ai(AIPlayer: AIPlayer, board: Board):
         
     board.update_state(move, AIPlayer.type)
 
+
 def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlayer):
     """
     Boucle principale du jeu
@@ -98,31 +99,35 @@ def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlay
     if ANALYSE:
         start_time = time.perf_counter()
     
-    play_times = 0
+    play_times_black = 0
+    play_times_white = 0
     delta = None    
     i = 0
     while CAN_MOVE[0] or CAN_MOVE[1]:
         CAN_MOVE[i%2] = True
         if DEBUG:
             print("Tour: ", i+1)
-
-        if i%2 == 0:
-            if ANALYSE_EACH_PLAY:
+        
+        if ANALYSE_EACH_PLAY:
                 start_time_i = time.perf_counter()
-                
+
+        if i%2 == 0:                
             if type(Player1) == AIPlayer:
                 process_input_ai(Player1, board)
             else:
                 process_input(Player1, board)
             
             if ANALYSE_EACH_PLAY:
-                play_times += time.perf_counter() - start_time_i
+                play_times_black += time.perf_counter() - start_time_i
 
         else:
             if type(Player2) == AIPlayer:
                 process_input_ai(Player2, board)
             else:
                 process_input(Player2, board)
+
+            if ANALYSE_EACH_PLAY:
+                play_times_white += time.perf_counter() - start_time_i
     
 
         i += 1
@@ -131,9 +136,10 @@ def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlay
         delta = time.perf_counter() - start_time
 
     if ANALYSE_EACH_PLAY:
-         play_times /= (i+1)/2
+        play_times_black /= (i+1)/2
+        play_times_white /= (i+1)/2
     
-    return game_over(board, delta, play_times)
+    return game_over(board, delta, play_times_black, play_times_white)
 
 def start_game(TYPE: int = GAME_TYPE):
     """
@@ -162,7 +168,7 @@ def start_game(TYPE: int = GAME_TYPE):
 
     return game_loop(board, p1, p2)
 
-def game_over(board: Board, delta: float, play_times: float):
+def game_over(board: Board, delta: float, play_times_black: float, play_times_white: float):
     """
     Affiche le vainqueur
 
@@ -190,9 +196,10 @@ def game_over(board: Board, delta: float, play_times: float):
     if ANALYSE:
         print("[+] Temps de jeu: ", delta, "s")
     if ANALYSE_EACH_PLAY:
-        print("[+] Temps moyen par coup du joueur noir: ", play_times, "s")
+        print("[+] Temps moyen par coup du joueur noir: ", play_times_black, "s")
+        print("[+] Temps moyen par coup du joueur blanc: ", play_times_white, "s")
     
-    return delta, black, white, play_times
+    return delta, black, white, play_times_black, play_times_white
 
 
 
@@ -269,12 +276,14 @@ def run():
         black = 0
         white = 0
         each_mean_black = 0
+        each_mean_white = 0
         accumulated_params = []
         for _ in range(NB_ITERATIONS):
             res = start_game(0)
             accumulated_params.append(res)
             mean += res[0]/NB_ITERATIONS
             each_mean_black += res[3]/NB_ITERATIONS
+            each_mean_white += res[4]/NB_ITERATIONS
             black += res[1]/NB_ITERATIONS
             white += res[2]/NB_ITERATIONS
 
@@ -283,16 +292,16 @@ def run():
         print("[+] Nombre d'itérations: ", NB_ITERATIONS)
         print("[+] Moyenne: ", mean, "s")
         print("[+] Moyenne des coup du joueur noir: ", each_mean_black, "s")
+        print("[+] Moyenne des coup du joueur blanc: ", each_mean_white, "s")
         print("[+] Victoires des noirs: ", round(black*100), "%")
         print("[+] Victoires des blancs: ", round(white*100), "%")
         print("[+] Matchs nuls: ", 100 - round(black*100) - round(white*100), "%")
         
         with open("res.txt", "a") as f:
-            f.write(f"{MAX_DEPTH}:{mean}:{black}:{white}:{each_mean_black}\n")
+            f.write(f"{MAX_DEPTH}:{mean}:{black}:{white}:{each_mean_black}:{each_mean_white}\n")
 
 
-        # TODO: ajouter le temps moyen par coup pour le joueur blanc
-        return [mean, black, white, each_mean_black], accumulated_params
+        return [mean, black, white, each_mean_black, each_mean_white], accumulated_params
     
     else:
         print("[+] Type de jeu: ", GAME_TYPE)

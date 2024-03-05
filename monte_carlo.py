@@ -97,7 +97,7 @@ class MonteCarlo:
                 for m in pm:
                     val = H[type-1][m[0], m[1]]
                     if val > max:
-                        min = val
+                        max = val
                         best = m
 
                 return best

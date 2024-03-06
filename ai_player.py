@@ -10,7 +10,9 @@ class AIPlayer:
 
     def __init__(self, type:int):
         self.type = type
-    
+        self.explored_states = []  # liste des états explorés
+
+
 
     def play(self, board: Board, alg_type:int, pm: list):
         """
@@ -23,17 +25,21 @@ class AIPlayer:
 
         if alg_type == 0:
             return self.random_play(pm)
+        
         elif alg_type == 1:
             if MAX_DEPTH %2 != 0:
                 raise ValueError("[!] MAX_DEPTH doit être pair")
             nm = self.negamax(board, 0, pm, self.type)
             return nm[1]
+        
         elif alg_type == 2:
             if MAX_DEPTH %2 != 0:   
                 raise ValueError("[!] MAX_DEPTH doit être pair")
             return self.nega_alpha_beta(board, 0, pm, -MAX_INT, MAX_INT, self.type)[1]
+        
         elif alg_type == 3:
             return self.monte_carlo(board, pm, self.type)
+        
         else:
             raise ValueError("[!] Invalid algorithm type")
     
@@ -83,10 +89,17 @@ class AIPlayer:
         best = -MAX_INT
         best_moves = []
         score = 0
+
+        if AVOID_DUPLICATES:
+            if depth != 0 and moves in self.explored_states:
+                return [-MAX_INT]
+            
+            self.explored_states.append(moves)
+
         for move in moves:
             board_copy = board.copy()
             board_copy.update_state(move, type) 
-            score = -self.nega_alpha_beta(board_copy, depth+1, moves, -beta, -alpha, other_type(type))[0]
+            score = -self.nega_alpha_beta(board_copy, depth+1, None, -beta, -alpha, other_type(type))[0]
 
             if score == best:  
                 best_moves.append(move)
@@ -99,7 +112,7 @@ class AIPlayer:
                     if alpha > beta:
                         break
 
-        best_move = random.choice(best_moves)
+        best_move = random.choice(best_moves)           
         return best, best_move
         
         
@@ -121,13 +134,20 @@ class AIPlayer:
         if len(moves) == 0:
             return self.strat(board.game_array, pm, type)
 
+
+        # if AVOID_DUPLICATES:
+        #     if depth != 0 and self.already_visited(moves):
+        #         return [-MAX_INT]
+            
+        #     self.explored_states.append(moves)
+
         best = -MAX_INT
         best_moves = []
         score = 0
         for move in moves:
             board_copy = board.copy()
             board_copy.update_state(move, type) 
-            score = -self.negamax(board_copy, depth+1, moves, other_type(type))[0]
+            score = -self.negamax(board_copy, depth+1, None, other_type(type))[0]
 
             if score == best:  
                 best_moves.append(move)
@@ -146,4 +166,3 @@ class AIPlayer:
         """
         MC = MonteCarlo(board=board, pm=pm, type=type)
         return MC.monte_carlo()
-    

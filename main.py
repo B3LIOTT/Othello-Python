@@ -11,6 +11,9 @@ import cv2
 import numpy as np
 import time
 
+"""
+---------------------------BIT VERSION--------------------------------
+"""
 
 def play(x: int, y: int, board: Board, move, type: int):
     """

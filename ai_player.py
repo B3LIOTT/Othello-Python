@@ -112,7 +112,7 @@ class AIPlayer:
                     if alpha > beta:
                         break
 
-        best_move = random.choice(best_moves)           
+        best_move = random.choice(best_moves)   
         return best, best_move
         
         

@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from constants import NB_ITERATIONS, ANALYSE
+import pylab
 import main
 
 
@@ -25,6 +26,41 @@ def depth_analysis():
     axis[0].legend()
     axis[1].legend()
     plt.legend()
+    plt.show()
+
+
+def time_analysis():
+    """
+    https://fr.moonbooks.org/Articles/Diagramme-en-b%C3%A2tons-avec-Matplotlib/#myGallery
+    """
+    with open("res.txt", "r") as f:
+        data = f.readlines()
+        data = [d.split(":") for d in data]
+        data = [[float(d[1]), float(d[3]), float(d[4])] for d in data]
+
+    x = [data[i][0] for i in range(len(data))]
+    y_total_times = [data[i][1] for i in range(len(data))]
+    y_each_times_black = [data[i][3] for i in range(len(data))]
+    y_each_times_white = [data[i][4] for i in range(len(data))]
+
+    fig = plt.figure()
+    x = [1,2]
+    width = 0.05
+    BarNames = ['a','b']
+
+    plt.bar(x, y_each_times_black, width, color=(0.65098041296005249, 0.80784314870834351, 0.89019608497619629, 1.0) )
+    plt.scatter([i+width/2.0 for i in x],y_each_times_black,color='k',s=40)
+
+    plt.xlim(0,11)
+    plt.ylim(0,14)
+    plt.grid()
+
+    plt.ylabel('Counts')
+    plt.title('Diagramme en Batons !')
+
+    pylab.xticks(x, BarNames, rotation=40)
+
+    plt.savefig('SimpleBar.png')
     plt.show()
 
 
@@ -59,4 +95,8 @@ if __name__ == "__main__":
         mean_results, results = main.run()
         plot(mean_results, results)
     
-    depth_analysis()
+    inp = int(input("What type of results do you want?\n\t1. Time/Depth analysis\n\t2. Time analysis\n\nYour choice:"))
+    if inp == 1:
+        depth_analysis()
+    elif inp == 2:
+        time_analysis()

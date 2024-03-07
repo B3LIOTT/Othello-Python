@@ -1,6 +1,10 @@
 import numpy as np
 from constants import *
 
+"""
+---------------------------BIT VERSION--------------------------------
+"""
+
 
 class Board:
     """

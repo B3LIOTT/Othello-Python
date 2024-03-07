@@ -157,7 +157,7 @@ class Board:
         return valid_directions
     
       
-    def possible_moves(self, type: PION) -> list[int]:
+    def possible_moves(self, pion: PION) -> list[int]:
         """
         Retourne l'ensemble des coups possibles pour un joueur, sous forme d'une liste d'entier: 0b x y dx1 dy1... avec x, y les coordonnées du coup et dxi, dyi la direction du coup
         on représente les directions ainsi:
@@ -175,7 +175,7 @@ class Board:
         dirs = []
         for adj in self.adjacents:
             x, y = adj
-            valid_directions = self.check_directions(x, y, type)
+            valid_directions = self.check_directions(x, y, pion)
             if valid_directions != 0b0:
                 dir = (valid_directions << 8) | x << 4 | y  
                 dirs.append(dir)
@@ -183,10 +183,24 @@ class Board:
         return dirs
     
 
+    def score(self):
+        """
+        :return: score noirs, score blancs
+        """
+        b_score = 0
+        w_score = 0
+
+        for i in range(0, pow(SIZE, 2)*2, 2):
+            if (self.game_array >> i) & 0b11 == PION.BLACK.value:
+                b_score += 1
+            elif (self.game_array >> i) & 0b11 == PION.WHITE.value:
+                w_score += 1
+
+        return b_score, w_score
+    
+
     def __str__(self):
-        print(self.game_array)
-        print("---------------------")
-        print("Adjacents: ", self.adjacents)
+        raise NotImplementedError
 
     
     def copy(self):

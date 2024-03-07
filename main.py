@@ -10,19 +10,21 @@ from time import sleep
 import cv2
 import numpy as np
 import time
+from bitwise_op import *
+from pions import PION
 
 """
 ---------------------------BIT VERSION--------------------------------
 """
 
-def play(x: int, y: int, board: Board, move, type: int):
+def play(board: Board, move, pion: PION):
     """
     Joue un coup
 
     :param x: coordonnée x
     :param y: coordonnée y
     """
-    board.update_state(move, type) 
+    board.update_state(move, pion) 
 
 def is_possible(pm: list, x: int, y: int):
     """
@@ -35,7 +37,7 @@ def is_possible(pm: list, x: int, y: int):
     :return: True si le coup est possible, False sinon et l'indice du coup dans la liste des coups possibles
     """
     for i in range(len(pm)):
-            if (x, y) == (pm[i][0], pm[i][1]):
+            if (x, y) == x_y_from_move(pm[i]):
                 return True, i
         
     return False, -1
@@ -50,12 +52,12 @@ def process_input(Player: Player, board: Board):
     :param x: coordonnée x
     :param y: coordonnée y
     """
-    pm = board.possible_moves(Player.type)  
+    pm = board.possible_moves(Player.pion)  
     if len(pm) == 0:
         if DEBUG:
             print("[!] Aucun coup possible")
 
-        CAN_MOVE[Player.type-1] = False
+        CAN_MOVE[AIPlayer.pion.index()] = False
         return
     
     if not ANALYSE and DISPLAY:
@@ -68,23 +70,24 @@ def process_input_ai(AIPlayer: AIPlayer, board: Board):
     :param Player: joueur ia
     :param Board: Board
     """
-    pm = board.possible_moves(AIPlayer.type)
+    pm = board.possible_moves(AIPlayer.pion)
     if len(pm) == 0:
         if DEBUG:
             print("[!] Aucun coup possible")
-        CAN_MOVE[AIPlayer.type-1] = False
+            
+        CAN_MOVE[AIPlayer.pion.index()] = False
         return
     
     if not ANALYSE and DISPLAY:
-        opencv_display(board, pm, AIPlayer.type, interactable = False)
+        opencv_display(board, pm, AIPlayer.pion, interactable = False)
 
-    move = AIPlayer.play(board, ALGS[AIPlayer.type-1], pm)
+    move = AIPlayer.play(board, ALGS[AIPlayer.pion.index()], pm)
 
     if DEBUG:
-        print("[+] Coup IA: ", move[0],  move[1], AIPlayer.type)
-        print("[+] Details: ", move)
+        print("[+] Coup IA: ", x_y_from_move(move), AIPlayer.pion.index())
+        print("[+] Details: {:02b}".format(move))
         
-    board.update_state(move, AIPlayer.type)
+    board.update_state(move, AIPlayer.pion)
 
 
 def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlayer):
@@ -144,7 +147,7 @@ def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlay
     
     return game_over(board, delta, play_times_black, play_times_white)
 
-def start_game(TYPE: int = GAME_TYPE):
+def start_game():
     """
     Démarre le jeu
 
@@ -152,18 +155,18 @@ def start_game(TYPE: int = GAME_TYPE):
     """
     board = Board()
 
-    if TYPE == 1:
-        p1 = Player(1)
-        p2 = Player(2)
-    elif TYPE == 2:
-        p1 = AIPlayer(1)
-        p2 = Player(2)
-    elif TYPE == 3:
-        p1 = Player(1)
-        p2 = AIPlayer(2)
+    if GAME_TYPE == 1:
+        p1 = Player(PION.BLACK)
+        p2 = Player(PION.WHITE)
+    elif GAME_TYPE == 2:
+        p1 = AIPlayer(PION.BLACK)
+        p2 = Player(PION.WHITE)
+    elif GAME_TYPE == 3:
+        p1 = Player(PION.BLACK)
+        p2 = AIPlayer(PION.WHITE)
     else:
-        p1 = AIPlayer(1)
-        p2 = AIPlayer(2)
+        p1 = AIPlayer(PION.BLACK)
+        p2 = AIPlayer(PION.WHITE)
     
     print("[+] Debug mode activated: ", DEBUG)
     print("[+] Analyse mode activated: ", ANALYSE)
@@ -178,18 +181,17 @@ def game_over(board: Board, delta: float, play_times_black: float, play_times_wh
     :param board: plateau
     """
     print("[-]---- Fin de la partie ---- ")
-    nb_discs_p1 = np.sum(board.game_array == 1)
-    nb_discs_p2 = np.sum(board.game_array == 2)
+    area_p1, area_p2 = board.score()
 
-    print("[+] Score: ", nb_discs_p1, " - ", nb_discs_p2)
+    print("[+] Score: ", area_p1, " - ", area_p2)
 
     black = 0
     white = 0
-    if nb_discs_p1 > nb_discs_p2:
+    if area_p1 > area_p2:
         print("[+] Les noirs gagnent")
         black = 1
 
-    elif nb_discs_p1 < nb_discs_p2:
+    elif area_p1 < area_p2:
         print("[+] Les blancs gagnent")
         white = 1
 
@@ -207,7 +209,7 @@ def game_over(board: Board, delta: float, play_times_black: float, play_times_wh
 
 
 # UI
-def mouse_callback_process(possible_moves):
+def mouse_callback_process(possible_moves: list[int]):
 
     x = None
     y = None
@@ -229,26 +231,31 @@ def mouse_callback_process(possible_moves):
         print("[+] Click: ", x, y)          
         print("[+] Details: ", possible_moves[m[1]])
 
-    return x, y, possible_moves[m[1]]
+    return possible_moves[m[1]]
 
-def opencv_display(board: Board, possible_moves: list, type:int, interactable : bool = True):
+def opencv_display(board: Board, possible_moves: list, pion: PION, interactable : bool = True):
 
     img = np.zeros((SIZE, SIZE, 3), dtype = np.uint8)
 
     for i in range(SIZE):
         for j in range(SIZE):
-            if board.game_array[i, j] == 0:
-                img[i, j] = bg_color
-            elif  board.game_array[i, j] == 1:
-                img[i, j] = black_color
-            else :
+            if board.GET_VAL(i, j) == 0b10:
                 img[i, j] = white_color
 
+            elif  board.GET_VAL(i, j) == 0b01:
+                img[i, j] = black_color
+
+            else :
+                img[i, j] = bg_color
+
     for i in range(len(possible_moves)):
-        if type == 1:
-            img[possible_moves[i][0], possible_moves[i][1]] = valid_move_color_black
-        elif type == 2:
-            img[possible_moves[i][0], possible_moves[i][1]] = valid_move_color_white
+        x, y = x_y_from_move(possible_moves[i])
+        if pion == PION.BLACK:
+            img[x, y] = valid_move_color_black
+
+        elif pion == PION.WHITE:
+            img[x, y] = valid_move_color_white
+
         else:
             raise ValueError("[!] Invalid type")
 
@@ -266,8 +273,8 @@ def opencv_display(board: Board, possible_moves: list, type:int, interactable : 
     cv2.imshow("Othello", img)
 
     if interactable:
-        x, y, move = mouse_callback_process(possible_moves)
-        play(x, y, board, move, type)
+        move = mouse_callback_process(possible_moves)
+        play(board, move, pion)
     
     else:
         cv2.waitKey(10) # pour ralentir l'affichage, sinon c'est trop rapide et rien ne s'affiche

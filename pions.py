@@ -1,4 +1,6 @@
 from enum import Enum
+from constants import STRATS, ALGS
+
 
 class PION(Enum):
     BLACK = 0b01
@@ -13,3 +15,13 @@ class PION(Enum):
         :return: type opposé
         """
         return PION.BLACK if self == PION.WHITE else PION.WHITE
+
+
+    def index(self):
+        """
+        Retourne la valeur associée
+
+        :param type: type de pion
+        :return: valeur associée
+        """
+        return 0 if self == PION.BLACK else 1

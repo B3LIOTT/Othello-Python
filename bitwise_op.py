@@ -1,5 +1,13 @@
 
 
+def x_y_from_move(move: int):
+    """
+    :param move: move sous forme de bits
+    :return: coordonnées x, y du move
+    """
+    return (move >> 4) & 0b1111, move & 0b1111
+
+
 def read_valid_dir(dir: int):
     """
     :param dir: directions valides sous forme de bits

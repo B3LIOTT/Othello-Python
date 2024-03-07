@@ -1,5 +1,7 @@
+from pions import PION
+
 
 class Player:
 
-    def __init__(self, type:int):
-        self.type = type
+    def __init__(self, pion: PION):
+        self.pion = pion

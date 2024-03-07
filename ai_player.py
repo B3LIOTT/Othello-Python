@@ -4,17 +4,18 @@ import random
 import numpy as np
 import math as m
 from monte_carlo import MonteCarlo
+from pions import PION, other_type
 
 
 class AIPlayer:
 
-    def __init__(self, type:int):
-        self.type = type
+    def __init__(self, pion:PION):
+        self.type = pion
         self.explored_states = []  # liste des états explorés
 
 
 
-    def play(self, board: Board, alg_type:int, pm: list):
+    def play(self, board: Board, alg_type:int, pm: list[int]):
         """
         Joue un coup en fonction de l'algorithme choisi
 
@@ -29,38 +30,40 @@ class AIPlayer:
         elif alg_type == 1:
             if MAX_DEPTH %2 != 0:
                 raise ValueError("[!] MAX_DEPTH doit être pair")
-            nm = self.negamax(board, 0, pm, self.type)
+            
+            nm = self.negamax(board, 0, pm, self.pion)
             return nm[1]
         
         elif alg_type == 2:
             if MAX_DEPTH %2 != 0:   
                 raise ValueError("[!] MAX_DEPTH doit être pair")
-            return self.nega_alpha_beta(board, 0, pm, -MAX_INT, MAX_INT, self.type)[1]
+            
+            return self.nega_alpha_beta(board, 0, pm, -MAX_INT, MAX_INT, self.pion)[1]
         
         elif alg_type == 3:
-            return self.monte_carlo(board, pm, self.type)
+            return self.monte_carlo(board, pm, self.pion)
         
         else:
             raise ValueError("[!] Invalid algorithm type")
     
 
-    def strat(self, board: Board, pm: list, type: int):
-        if STRATS[type-1] == 0:
+    def strat(self, board: Board, pm: list, pion: PION):
+        if STRATS[pion.index()] == 0:
             return [heuristic(board, type)]
         
-        elif STRATS[type-1] == 1:
+        elif STRATS[pion.index()] == 1:
                 return [np.sum(board == type) - np.sum(board == other_type(type))]
         
-        elif STRATS[type-1] == 2:
+        elif STRATS[pion.index()] == 2:
             return [len(pm) - len(board.possible_moves(other_type(type)))]
         
-        elif STRATS[type-1] == 3:
+        elif STRATS[pion.index()] == 3:
             raise NotImplementedError
         else:
             raise ValueError("[!] Invalid strategy type")
         
 
-    def random_play(self, pm: list):
+    def random_play(self, pm: list[int]):
         """
         Joue un coup aléatoire
         """ 
@@ -68,6 +71,7 @@ class AIPlayer:
         rand_pm = pm[rand_ind]
 
         return rand_pm
+    
     
     def nega_alpha_beta(self, board: Board, depth: int, pm: list, alpha: int, beta: int, type: int):
         """

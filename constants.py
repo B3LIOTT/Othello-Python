@@ -71,15 +71,6 @@ def is_win(board: np.ndarray, type: int):
     """
     return 1 if len(np.where(board == type)[0]) > len(np.where(board == other_type(type))[0]) else 0
 
-def other_type(type: int):
-    """
-    Retourne le type opposé
-
-    :param type: type de pion
-
-    :return: type opposé
-    """
-    return 3-type
 
 # UI
 bg_color = (53, 132, 186)

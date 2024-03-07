@@ -4,13 +4,13 @@ import random
 import numpy as np
 import math as m
 from monte_carlo import MonteCarlo
-from pions import PION, other_type
+from pions import PION
 
 
 class AIPlayer:
 
     def __init__(self, pion:PION):
-        self.type = pion
+        self.pion = pion
         self.explored_states = []  # liste des états explorés
 
 
@@ -52,10 +52,10 @@ class AIPlayer:
             return [heuristic(board, type)]
         
         elif STRATS[pion.index()] == 1:
-                return [np.sum(board == type) - np.sum(board == other_type(type))]
+                return [np.sum(board == type) - np.sum(board == pion.other_type())]
         
         elif STRATS[pion.index()] == 2:
-            return [len(pm) - len(board.possible_moves(other_type(type)))]
+            return [len(pm) - len(board.possible_moves(pion.other_type()))]
         
         elif STRATS[pion.index()] == 3:
             raise NotImplementedError
@@ -72,7 +72,7 @@ class AIPlayer:
 
         return rand_pm
     
-    
+
     def nega_alpha_beta(self, board: Board, depth: int, pm: list, alpha: int, beta: int, type: int):
         """
         Joue un coup en utilisant l'algorithme negamax

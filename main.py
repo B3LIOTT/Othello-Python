@@ -57,7 +57,7 @@ def process_input(Player: Player, board: Board):
         if DEBUG:
             print("[!] Aucun coup possible")
 
-        CAN_MOVE[AIPlayer.pion.index()] = False
+        CAN_MOVE[Player.pion.index()] = False
         return
     
     if not ANALYSE and DISPLAY:

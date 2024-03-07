@@ -20,7 +20,7 @@ class Board:
 
         self.range_size = range(SIZE)
         self.game_array = 0
-        self.adjacents = 0
+        self.adjacents = []
         self.directions = []
 
 

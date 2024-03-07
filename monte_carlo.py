@@ -1,5 +1,5 @@
 from board import Board
-from constants import C, MAX_INT, MAX_ITER, MC_ROLLOUT_METHOD, is_win, other_type, H
+from constants import C, MAX_INT, MAX_ITER, MC_ROLLOUT_METHOD, is_win, H
 import random
 import numpy as np
 

@@ -61,8 +61,9 @@ def process_input(Player: Player, board: Board):
         return
     
     if not ANALYSE and DISPLAY:
-        opencv_display(board, pm, Player.type, interactable = True)
+        opencv_display(board, pm, Player.pion, interactable = True)
     
+
 def process_input_ai(AIPlayer: AIPlayer, board: Board):
     """
     Traite l'entrée de l'IA
@@ -154,6 +155,7 @@ def start_game():
     :param type: type de jeu (1: joueur vs joueur, 2: joueur vs IA, 3: IA vs IA)
     """
     board = Board()
+    board.init_board()
 
     if GAME_TYPE == 1:
         p1 = Player(PION.BLACK)
@@ -229,7 +231,7 @@ def mouse_callback_process(possible_moves: list[int]):
         
     if DEBUG:
         print("[+] Click: ", x, y)          
-        print("[+] Details: ", possible_moves[m[1]])
+        print("[+] Details: {:03b}".format(possible_moves[m[1]]))
 
     return possible_moves[m[1]]
 

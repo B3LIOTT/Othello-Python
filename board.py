@@ -109,6 +109,9 @@ class Board:
         move >>= 8  # on retire les coordonnées x et y pour ne garder que les directions
         directions = read_valid_dir(move)
         
+        if DEBUG:
+            print("[+] Valid directions: ", directions)
+        
         for dir in directions:
             current_x = x
             current_y = y
@@ -117,7 +120,9 @@ class Board:
             current_x += dx
             current_y += dy
 
-            while self.GET_VAL(current_x, current_y) != PION.other_type().value:
+            print("{:02b}".format(self.GET_VAL(current_x, current_y)))
+
+            while self.GET_VAL(current_x, current_y) != pion.other_type().value:
                 self.SWAP_PION(current_x, current_y)
                 current_x += dx
                 current_y += dy
@@ -148,7 +153,8 @@ class Board:
                 if self.GET_VAL(current_x, current_y) == PION.NONE.value:
                     break
                 if self.GET_VAL(current_x, current_y) == pion.value:
-                    valid_directions |= (dir_to_bits((dx, dy)) << k*3)
+                    valid_directions <<= 3
+                    valid_directions |= dir_to_bits((dx, dy))
                     break
                 
                 current_x += dx

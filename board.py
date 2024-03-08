@@ -111,9 +111,9 @@ class Board:
         if DEBUG:
             print("[+] Valid directions: ", directions)
         
-        for dir in directions:
-            dx, dy = dir[0]
-            end_x, end_y = dir[1]
+        for d in directions:
+            dx, dy = d[0]
+            end_x, end_y = d[1]
             current_x = x + dx
             current_y = y + dy
 
@@ -168,7 +168,7 @@ class Board:
             x, y = adj
             valid_directions = self.check_directions(x, y, pion)
             if valid_directions != []:  
-                moves.append([(x,y), dir])
+                moves.append([(x,y), valid_directions])
 
         return moves
     

@@ -17,7 +17,7 @@ from pions import PION
 ---------------------------BIT VERSION--------------------------------
 """
 
-def play(board: Board, move, pion: PION):
+def play(board: Board, move: list, pion: PION):
     """
     Joue un coup
 
@@ -37,7 +37,7 @@ def is_possible(pm: list, x: int, y: int):
     :return: True si le coup est possible, False sinon et l'indice du coup dans la liste des coups possibles
     """
     for i in range(len(pm)):
-            if (x, y) == x_y_from_move(pm[i]):
+            if (x, y) == pm[i][0]:
                 return True, i
         
     return False, -1
@@ -85,8 +85,8 @@ def process_input_ai(AIPlayer: AIPlayer, board: Board):
     move = AIPlayer.play(board, ALGS[AIPlayer.pion.index()], pm)
 
     if DEBUG:
-        print("[+] Coup IA: ", x_y_from_move(move), AIPlayer.pion.index())
-        print("[+] Details: {:02b}".format(move))
+        print("[+] Coup IA: ", move[0])
+        print("[+] Details: ", move[1])
         
     board.update_state(move, AIPlayer.pion)
 
@@ -211,7 +211,7 @@ def game_over(board: Board, delta: float, play_times_black: float, play_times_wh
 
 
 # UI
-def mouse_callback_process(possible_moves: list[int]):
+def mouse_callback_process(possible_moves: list):
 
     x = None
     y = None
@@ -231,7 +231,7 @@ def mouse_callback_process(possible_moves: list[int]):
         
     if DEBUG:
         print("[+] Click: ", x, y)          
-        print("[+] Details: {:03b}".format(possible_moves[m[1]]))
+        print("[+] Details: ", possible_moves[m[1]])
 
     return possible_moves[m[1]]
 
@@ -251,7 +251,7 @@ def opencv_display(board: Board, possible_moves: list, pion: PION, interactable 
                 img[i, j] = bg_color
 
     for i in range(len(possible_moves)):
-        x, y = x_y_from_move(possible_moves[i])
+        x, y = possible_moves[i][0]
         if pion == PION.BLACK:
             img[x, y] = valid_move_color_black
 

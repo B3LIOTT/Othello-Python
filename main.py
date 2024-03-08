@@ -6,7 +6,6 @@ from constants import *
 from board import Board
 from player import Player
 from ai_player import AIPlayer
-from time import sleep
 import cv2
 import numpy as np
 import time

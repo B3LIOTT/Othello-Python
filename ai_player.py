@@ -73,22 +73,22 @@ class AIPlayer:
         return rand_pm
     
 
-    def nega_alpha_beta(self, board: Board, depth: int, pm: list, alpha: int, beta: int, type: int):
+    def nega_alpha_beta(self, board: Board, depth: int, pm: list, alpha: int, beta: int, pion: PION):
         """
         Joue un coup en utilisant l'algorithme negamax
 
         :param board: plateau de jeu
         """
         if depth == MAX_DEPTH or len(board.adjacents) == 0:
-            return self.strat(board.game_array, pm, type)
+            return self.strat(board.game_array, pm, pion)
 
         if depth != 0:
-            moves = board.possible_moves(type)
+            moves = board.possible_moves(pion)
         else:
             moves = pm
 
         if len(moves) == 0:
-            return self.strat(board.game_array, pm, type)
+            return self.strat(board.game_array, pm, pion)
         
         best = -MAX_INT
         best_moves = []
@@ -102,8 +102,8 @@ class AIPlayer:
 
         for move in moves:
             board_copy = board.copy()
-            board_copy.update_state(move, type) 
-            score = -self.nega_alpha_beta(board_copy, depth+1, None, -beta, -alpha, other_type(type))[0]
+            board_copy.update_state(move, pion) 
+            score = -self.nega_alpha_beta(board_copy, depth+1, None, -beta, -alpha, pion.other_type())[0]
 
             if score == best:  
                 best_moves.append(move)
@@ -121,22 +121,22 @@ class AIPlayer:
         
         
 
-    def negamax(self, board: Board, depth: int, pm: list, type: int):
+    def negamax(self, board: Board, depth: int, pm: list, pion: PION):
         """
         Joue un coup en utilisant l'algorithme negamax
 
         :param board: plateau de jeu
         """
         if depth == MAX_DEPTH or len(board.adjacents) == 0:
-            return self.strat(board.game_array, pm, type)
+            return self.strat(board.game_array, pm, pion)
 
         if depth != 0:
-            moves = board.possible_moves(type)
+            moves = board.possible_moves(pion)
         else:
             moves = pm
 
         if len(moves) == 0:
-            return self.strat(board.game_array, pm, type)
+            return self.strat(board.game_array, pm, pion)
 
 
         # if AVOID_DUPLICATES:
@@ -150,8 +150,8 @@ class AIPlayer:
         score = 0
         for move in moves:
             board_copy = board.copy()
-            board_copy.update_state(move, type) 
-            score = -self.negamax(board_copy, depth+1, None, other_type(type))[0]
+            board_copy.update_state(move, pion) 
+            score = -self.negamax(board_copy, depth+1, None, pion.other_type())[0]
 
             if score == best:  
                 best_moves.append(move)

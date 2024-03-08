@@ -1,5 +1,4 @@
 from enum import Enum
-from constants import STRATS, ALGS
 
 
 class PION(Enum):

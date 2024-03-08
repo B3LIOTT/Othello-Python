@@ -1,7 +1,6 @@
 import numpy as np
 from constants import *
 from pions import *
-from bitwise_op import *
 
 """
 ---------------------------BIT VERSION--------------------------------
@@ -74,6 +73,8 @@ class Board:
             (SIZE // 2 + 1, SIZE // 2 + 1)
         ]
 
+        self.directions = [(1,0), (0,1), (-1,0), (0,-1), (1,1), (-1,-1), (1,-1), (-1,1)]
+
 
     def update_adjacents(self, x: int, y: int):
         """
@@ -141,7 +142,7 @@ class Board:
 
             if not (0 <= current_x < SIZE and 0 <= current_y < SIZE) or self.GET_VAL(current_x, current_y) != pion.other_type().value:
                 continue
-            
+
             while 0 <= current_x < SIZE and 0 <= current_y < SIZE:
                 if self.GET_VAL(current_x, current_y) == PION.NONE.value:
                     break

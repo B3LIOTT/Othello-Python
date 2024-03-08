@@ -1,9 +1,10 @@
 
 import numpy as np
+from pions import PION
 
 DEBUG=False
 ANALYSE=True              # ANALYSE_* = True passe automatiquement DISPLAY à False pour éviter les problèmes de performance
-ANALYSE_EACH_PLAY=True     # Uniquement pour le joueur 1
+ANALYSE_EACH_PLAY=False     # Uniquement pour le joueur 1
 NB_ITERATIONS=5
 DISPLAY=True
 
@@ -60,7 +61,7 @@ def heuristic(board: np.ndarray, type: int):
     """
     return np.sum(H[type-1][np.where(board == 2)]) if type == 2 else np.sum(H[type-1][np.where(board == 1)])
 
-def is_win(board: np.ndarray, type: int):
+def is_win(board: np.ndarray, pion: PION):
     """
     Détermine si le joueur a gagné
 
@@ -69,7 +70,11 @@ def is_win(board: np.ndarray, type: int):
 
     :return: True si le joueur a gagné, False sinon
     """
-    return 1 if len(np.where(board == type)[0]) > len(np.where(board == other_type(type))[0]) else 0
+    b, w = board.score()
+    if pion == PION.BLACK:
+        return 1 if b > w else 0
+    else:
+        return 1 if w > b else 0
 
 
 # UI

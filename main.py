@@ -9,7 +9,6 @@ from ai_player import AIPlayer
 import cv2
 import numpy as np
 import time
-from bitwise_op import *
 from pions import PION
 
 """

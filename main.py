@@ -148,7 +148,7 @@ def game_loop(board: Board, Player1: Player | AIPlayer, Player2: Player | AIPlay
     
     return game_over(board, delta, play_times_black, play_times_white)
 
-def start_game():
+def start_game(TYPE: int = GAME_TYPE):
     """
     Démarre le jeu
 
@@ -157,13 +157,13 @@ def start_game():
     board = Board()
     board.init_board()
 
-    if GAME_TYPE == 1:
+    if TYPE == 1:
         p1 = Player(PION.BLACK)
         p2 = Player(PION.WHITE)
-    elif GAME_TYPE == 2:
+    elif TYPE == 2:
         p1 = AIPlayer(PION.BLACK)
         p2 = Player(PION.WHITE)
-    elif GAME_TYPE == 3:
+    elif TYPE == 3:
         p1 = Player(PION.BLACK)
         p2 = AIPlayer(PION.WHITE)
     else:

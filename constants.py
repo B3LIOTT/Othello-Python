@@ -1,8 +1,8 @@
 
 import numpy as np
 
-DEBUG=True
-ANALYSE=False              # ANALYSE_* = True passe automatiquement DISPLAY à False pour éviter les problèmes de performance
+DEBUG=False
+ANALYSE=True              # ANALYSE_* = True passe automatiquement DISPLAY à False pour éviter les problèmes de performance
 ANALYSE_EACH_PLAY=True     # Uniquement pour le joueur 1
 NB_ITERATIONS=5
 DISPLAY=True
@@ -12,7 +12,7 @@ SIZE = 8
 SLEEP_TIME = 0
 ALGS = [0, 0]              # 0: random, 1: negamax, 2: nega_alpha_beta
 STRATS = [0, 0]            # 0: positionnel, 1: absolu, 2: mobilité, 3: mixte
-GAME_TYPE = 1              # 1: joueur vs joueur, 2: IA vs joueur, 3: joueur vs IA, IA vs IA sinon
+GAME_TYPE = 0              # 1: joueur vs joueur, 2: IA vs joueur, 3: joueur vs IA, IA vs IA sinon
 MAX_INT = np.iinfo(np.int16).max
 
 # IA

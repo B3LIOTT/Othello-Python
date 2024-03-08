@@ -89,7 +89,7 @@ class Board:
                     self.adjacents.append((x+dx, y+dy))
 
 
-    def update_state(self, move: int, pion: PION):
+    def update_state(self, move: list, pion: PION):
         """
         Met à jour l'état du plateau
 
@@ -102,45 +102,40 @@ class Board:
             print("[+] updating state")
         
 
-        x, y = (move >> 4) & 0b1111, move & 0b1111
+        x, y = move[0]
         self.SET_VAL(x, y, pion)
         self.update_adjacents(x, y)
 
-        move >>= 8  # on retire les coordonnées x et y pour ne garder que les directions
-        directions = read_valid_dir(move)
+        directions = move[1]
         
         if DEBUG:
             print("[+] Valid directions: ", directions)
         
         for dir in directions:
-            current_x = x
-            current_y = y
+            dx, dy = dir[0]
+            end_x, end_y = dir[1]
+            current_x = x + dx
+            current_y = y + dy
 
-            dx, dy = dir
-            current_x += dx
-            current_y += dy
-
-            print("{:02b}".format(self.GET_VAL(current_x, current_y)))
-
-            while self.GET_VAL(current_x, current_y) != pion.other_type().value:
+            while (current_x, current_y) != (end_x, end_y):
                 self.SWAP_PION(current_x, current_y)
                 current_x += dx
                 current_y += dy
 
 
-    def check_directions(self, x:int, y:int, pion: PION) -> int:
+    def check_directions(self, x:int, y:int, pion: PION) -> list:
         """
         Vérifie si placer un pion de type 'type' en (x, y) permet d'encadrer au moins un pion adverse
         dans la direction spécifiée. Retourne True si c'est le cas, False sinon.
 
         :param x: coordonnée x
         :param y: coordonnée y
-        :param type: type de pion
+        :param pion: type de pion
 
         :return: liste des coups possibles avec leurs caractéristiques (comme la direction par exemple)
         """
 
-        valid_directions = 0b0
+        valid_directions = []
 
         for k in range(8):
             dx, dy = self.directions[k]
@@ -153,8 +148,7 @@ class Board:
                 if self.GET_VAL(current_x, current_y) == PION.NONE.value:
                     break
                 if self.GET_VAL(current_x, current_y) == pion.value:
-                    valid_directions <<= 3
-                    valid_directions |= dir_to_bits((dx, dy))
+                    valid_directions.append([(dx, dy), (current_x, current_y)])
                     break
                 
                 current_x += dx
@@ -163,30 +157,20 @@ class Board:
         return valid_directions
     
       
-    def possible_moves(self, pion: PION) -> list[int]:
+    def possible_moves(self, pion: PION) -> list:
         """
-        Retourne l'ensemble des coups possibles pour un joueur, sous forme d'une liste d'entier: 0b x y dx1 dy1... avec x, y les coordonnées du coup et dxi, dyi la direction du coup
-        on représente les directions ainsi:
-        0b010: (1, 0)
-        0b001: (0, 1)
-        0b100: (-1, 0)
-        0b010: (0, -1)
-        0b110: (1, 1)
-        0b101: (-1, -1)
-        0b011: (1, -1)
-        0b100: (-1, 1)
+        Retourne l'ensemble des coups possibles pour un joueur
 
         :param type: type de pion
         """
-        dirs = []
+        moves = []
         for adj in self.adjacents:
             x, y = adj
             valid_directions = self.check_directions(x, y, pion)
-            if valid_directions != 0b0:
-                dir = (valid_directions << 8) | x << 4 | y  
-                dirs.append(dir)
+            if valid_directions != []:  
+                moves.append([(x,y), dir])
 
-        return dirs
+        return moves
     
 
     def score(self):

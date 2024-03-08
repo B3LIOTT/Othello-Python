@@ -135,9 +135,23 @@ class Board:
 
         valid_directions = []
 
-        for direction in [N, S, E, W, NE, SE, NW, SW]:
-            # utilise les masques pour vérifier si la direction est valide
+        for k in range(8):
+            dx, dy = self.directions[k]
+            current_x, current_y = x + dx, y + dy
+
+            if not (0 <= current_x < SIZE and 0 <= current_y < SIZE) or self.GET_VAL(current_x, current_y) != pion.other_type().value:
+                continue
             
+            while 0 <= current_x < SIZE and 0 <= current_y < SIZE:
+                if self.GET_VAL(current_x, current_y) == PION.NONE.value:
+                    break
+                if self.GET_VAL(current_x, current_y) == pion.value:
+                    valid_directions.append([(dx, dy), (current_x, current_y)])
+                    break
+
+                current_x += dx
+                current_y += dy
+
 
         return valid_directions
     

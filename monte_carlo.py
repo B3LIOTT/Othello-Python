@@ -20,16 +20,9 @@ class Node:
             """
             :return: meilleur enfant selon le ratio victoires/visites
             """
-            max = nodes[self.children[0]].wins / nodes[self.children[0]].visits
-            best = self.children[0]
-            for child in self.children:
-                v = nodes[child].wins / nodes[child].visits
-                if v > max:
-                    max = v
-                    best = child
-            
-            return best
+            return max(self.children, key=lambda x: (nodes[x].wins/nodes[x].visits))
     
+
         def UCB1(self, N):
             """
             :return: valeur UCB1
@@ -70,7 +63,7 @@ class MonteCarlo:
             if type == self.type:
                 return random.choice(pm)
 
-            else: # Choisie le meilleur coup pour l'adversaire
+            else:
                 sh = 0
                 for m in pm:
                     sh += H[type-1][m[0], m[1]]+500  # +500 pour rammener les valeurs dans l'intervalle [0, inf[
@@ -92,15 +85,7 @@ class MonteCarlo:
                 return random.choice(pm)
 
             else: # Choix du meilleur coup pour l'adversaire
-                max = -MAX_INT
-                best = None
-                for m in pm:
-                    val = H[type-1][m[0], m[1]]
-                    if val > max:
-                        max = val
-                        best = m
-
-                return best
+                return max(enumerate(pm), key=lambda x: H[type-1][x[1][0], x[1][1]])[1]
         
 
     def rollout(self, ind: int):

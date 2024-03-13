@@ -158,14 +158,7 @@ class MonteCarlo:
         """
         :return: indice du coup avec la plus grande valeur UCB1
         """
-        max = self.nodes[1].ucb1
-        max_index = 1
-        for i in range(1, self.l+1):
-            if self.nodes[i].ucb1 > max:
-                max = self.nodes[i].ucb1
-                max_index = i
-        
-        return max_index
+        return max(enumerate(self.nodes[1:self.l+1]), key=lambda x: x[1].ucb1)[0]+1
 
     def path_to_best_leaf(self, ind: int):
         """
@@ -211,5 +204,5 @@ class MonteCarlo:
                 self.expand(node_to_expand)
 
         
-        best_move_ind = self.max_UCB1()  # meilleur coup depuis la racine
+        best_move_ind = self.max_UCB1()
         return self.nodes[best_move_ind].move

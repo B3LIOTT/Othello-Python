@@ -10,14 +10,14 @@ DISPLAY=True
 # GAME
 SIZE = 8
 SLEEP_TIME = 0
-ALGS = [2, 0]              # 0: random, 1: negamax, 2: nega_alpha_beta, 3: monte_carlo
+ALGS = [3, 0]              # 0: random, 1: negamax, 2: nega_alpha_beta, 3: monte_carlo
 STRATS = [0, 0]            # 0: positionnel, 1: absolu, 2: mobilité, 3: mixte
 GAME_TYPE = 0              # 1: joueur vs joueur, 2: IA vs joueur, 3: joueur vs IA, IA vs IA sinon
 MAX_INT = np.iinfo(np.int16).max
 
 # IA
 AVOID_DUPLICATES = False
-MAX_DEPTH = 6              # pair uniquement
+MAX_DEPTH = 4              # pair uniquement
 MAX_ITER = 100
 C = 2
 MC_ROLLOUT_METHOD = 0      # 0: random, 1: probabiliste par l'heuristique, 2: deterministe par l'heuristique

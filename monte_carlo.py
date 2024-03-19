@@ -124,7 +124,6 @@ class MonteCarlo:
             self.nodes[ind].children.append(len(self.nodes)-1)
            
         # # TODO: Comme on a étendu l'arbre, on peut supprimer la board du noeud étendu pour libérer de la mémoire
-        # self.nodes[current_node.parent].board = None
 
 
     def contains_unvisited(self):
@@ -185,9 +184,11 @@ class MonteCarlo:
                 ind = self.max_UCB1()  # meilleur coup depuis la racine
 
                 node_to_expand = self.path_to_best_leaf(ind)
-
                 self.expand(node_to_expand)
 
         
         best_move_ind = self.max_UCB1()
+        # for i in range(1, self.l+1):
+        #     print(f"Node {i}: {self.nodes[i]}")
+        # print(f"Best move: {self.nodes[best_move_ind]}")
         return self.nodes[best_move_ind].move

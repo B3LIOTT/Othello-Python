@@ -6,7 +6,7 @@ import main
 
 
 def depth_analysis():
-    with open("res.txt", "r") as f:
+    with open("alpha-beta-DEPTH.txt", "r") as f:
         data = f.readlines()
         data = [d.split(":") for d in data]
         data = [[int(d[0]), float(d[1]), float(d[2]), float(d[3]), float(d[4])] for d in data]
@@ -16,15 +16,24 @@ def depth_analysis():
     y_each_times_black = [data[i][3] for i in range(len(data))]
     y_each_times_white = [data[i][4] for i in range(len(data))]
 
-    fig, axis = plt.subplots(2)
-    axis[0].set_title("Total game time")
-    axis[1].set_title("Each black play time")
-    axis[0].plot(x, y_total_times, label="Total game time")
-    axis[1].plot(x, y_each_times_black, label="Black plays mean time")
-    axis[1].plot(x, y_each_times_white, label="White plays mean time")
+    # fig, axis = plt.subplots(2)
+    # axis[0].set_title("Total game time")
+    # axis[0].plot(x, y_total_times, label="Total game time")
+
+    # axis[1].set_title("Each black play time")
+    # axis[1].plot(x, y_each_times_black, label="Black plays mean time")
+    # axis[1].plot(x, y_each_times_white, label="White plays mean time")
+    # plt.xlabel("Depth")
+    # plt.ylabel("Time (s)")
+
+    # axis[0].legend()
+    # axis[1].legend()
+
+    plt.plot(x, y_total_times, label="Total game time")
     
-    axis[0].legend()
-    axis[1].legend()
+    plt.xlabel("Depth")
+    plt.ylabel("Time (s)")
+
     plt.legend()
     plt.show()
 

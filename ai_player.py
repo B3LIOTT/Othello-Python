@@ -10,6 +10,7 @@ class AIPlayer:
 
     def __init__(self, type:int):
         self.type = type
+        self.nb_plays = 0
         self.explored_states = []  # liste des états explorés
 
 
@@ -44,6 +45,19 @@ class AIPlayer:
             raise ValueError("[!] Invalid algorithm type")
     
 
+    def mixed_strat(self, board: Board, pm: list, type: int):
+        """
+        :return: valeur heuristique du plateau selon la stratégie mixte
+        """
+        if self.nb_plays < 8:
+            return [heuristic(board, type)]
+        
+        if self.nb_plays < 23:
+            return [np.sum(board == type) - np.sum(board == other_type(type))]
+        
+        return [len(pm) - len(board.possible_moves(other_type(type)))]
+    
+    
     def strat(self, board: Board, pm: list, type: int):
         if STRATS[type-1] == 0:
             return [heuristic(board, type)]
@@ -55,10 +69,12 @@ class AIPlayer:
             return [len(pm) - len(board.possible_moves(other_type(type)))]
         
         elif STRATS[type-1] == 3:
-            raise NotImplementedError
+            return self.mixed_strat(board, pm, type)
+        
         else:
             raise ValueError("[!] Invalid strategy type")
         
+
 
     def random_play(self, pm: list):
         """
@@ -75,6 +91,8 @@ class AIPlayer:
 
         :param board: plateau de jeu
         """
+        self.nb_plays += 1
+
         if depth == MAX_DEPTH or len(board.adjacents) == 0:
             return self.strat(board.game_array, pm, type)
 
@@ -123,6 +141,8 @@ class AIPlayer:
 
         :param board: plateau de jeu
         """
+        self.nb_plays += 1
+        
         if depth == MAX_DEPTH or len(board.adjacents) == 0:
             return self.strat(board.game_array, pm, type)
 

@@ -45,31 +45,37 @@ class AIPlayer:
             raise ValueError("[!] Invalid algorithm type")
     
 
-    def mixed_strat(self, board: Board, pm: list, type: int):
+    def mixed_strat(self, board: Board, this_pm: list, other_pm: list, type: int):
         """
         :return: valeur heuristique du plateau selon la stratégie mixte
         """
         if self.nb_plays < 8:
-            return [heuristic(board, type)]
+            return [heuristic(board.game_array, type)]
         
         if self.nb_plays < 23:
-            return [np.sum(board == type) - np.sum(board == other_type(type))]
+            return [np.sum(board.game_array == type) - np.sum(board.game_array == other_type(type))]
         
-        return [len(pm) - len(board.possible_moves(other_type(type)))]
+        if this_pm is not None:
+            return [len(this_pm) - len(other_pm)]
+        else:
+            return [len(board.possible_moves(type)) - len(other_pm)]
     
     
-    def strat(self, board: Board, pm: list, type: int):
+    def strat(self, board: Board, this_pm: list, other_pm: list, type: int):
         if STRATS[type-1] == 0:
-            return [heuristic(board, type)]
+            return [heuristic(board.game_array, type)]
         
         elif STRATS[type-1] == 1:
-                return [np.sum(board == type) - np.sum(board == other_type(type))]
+                return [np.sum(board.game_array == type) - np.sum(board.game_array == other_type(type))]
         
         elif STRATS[type-1] == 2:
-            return [len(pm) - len(board.possible_moves(other_type(type)))]
+            if this_pm is not None:
+                return [len(this_pm) - len(other_pm)]
+            else:
+                return [len(board.possible_moves(type)) - len(other_pm)]
         
         elif STRATS[type-1] == 3:
-            return self.mixed_strat(board, pm, type)
+            return self.mixed_strat(board, this_pm, other_pm, type)
         
         else:
             raise ValueError("[!] Invalid strategy type")
@@ -92,9 +98,9 @@ class AIPlayer:
         :param board: plateau de jeu
         """
         self.nb_plays += 1
-
+ 
         if depth == MAX_DEPTH or len(board.adjacents) == 0:
-            return self.strat(board.game_array, pm, type)
+            return self.strat(board, None, pm, type)
 
         if depth != 0:
             moves = board.possible_moves(type)
@@ -102,7 +108,7 @@ class AIPlayer:
             moves = pm
 
         if len(moves) == 0:
-            return self.strat(board.game_array, pm, type)
+            return self.strat(board, moves, pm, type)
         
         best = -MAX_INT
         best_moves = []
@@ -117,7 +123,7 @@ class AIPlayer:
         for move in moves:
             board_copy = board.copy()
             board_copy.update_state(move, type) 
-            score = -self.nega_alpha_beta(board_copy, depth+1, None, -beta, -alpha, other_type(type))[0]
+            score = -self.nega_alpha_beta(board_copy, depth+1, moves, -beta, -alpha, other_type(type))[0]
 
             if score == best:  
                 best_moves.append(move)
@@ -142,9 +148,9 @@ class AIPlayer:
         :param board: plateau de jeu
         """
         self.nb_plays += 1
-        
+ 
         if depth == MAX_DEPTH or len(board.adjacents) == 0:
-            return self.strat(board.game_array, pm, type)
+            return self.strat(board, None, pm, type)
 
         if depth != 0:
             moves = board.possible_moves(type)
@@ -152,7 +158,7 @@ class AIPlayer:
             moves = pm
 
         if len(moves) == 0:
-            return self.strat(board.game_array, pm, type)
+            return self.strat(board, moves, pm, type)
 
 
         # if AVOID_DUPLICATES:
@@ -167,7 +173,7 @@ class AIPlayer:
         for move in moves:
             board_copy = board.copy()
             board_copy.update_state(move, type) 
-            score = -self.negamax(board_copy, depth+1, None, other_type(type))[0]
+            score = -self.negamax(board_copy, depth+1, moves, other_type(type))[0]
 
             if score == best:  
                 best_moves.append(move)

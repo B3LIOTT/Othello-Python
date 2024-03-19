@@ -278,7 +278,8 @@ def run():
         each_mean_black = 0
         each_mean_white = 0
         accumulated_params = []
-        for _ in range(NB_ITERATIONS):
+        for i in range(NB_ITERATIONS):
+            print(f"[-]--------------------------{i+1}/{NB_ITERATIONS}-----------------------------")
             res = start_game(0)
             accumulated_params.append(res)
             mean += res[0]/NB_ITERATIONS
@@ -297,8 +298,8 @@ def run():
         print("[+] Victoires des blancs: ", round(white*100), "%")
         print("[+] Matchs nuls: ", 100 - round(black*100) - round(white*100), "%")
         
-        with open("res.txt", "a") as f:
-            f.write(f"{MAX_DEPTH}:{mean}:{black}:{white}:{each_mean_black}:{each_mean_white}\n")
+        with open("res_MC.txt", "a") as f:
+            f.write(f"{MAX_DEPTH}:{mean}:{black}:{white}:{each_mean_black}:{each_mean_white}:{C}:{MAX_ITER}\n")
 
 
         return [mean, black, white, each_mean_black, each_mean_white], accumulated_params

@@ -2,24 +2,24 @@
 import numpy as np
 
 DEBUG=False
-ANALYSE=False              # ANALYSE_* = True passe automatiquement DISPLAY à False pour éviter les problèmes de performance
+ANALYSE=True              # ANALYSE_* = True passe automatiquement DISPLAY à False pour éviter les problèmes de performance
 ANALYSE_EACH_PLAY=True     # Uniquement pour le joueur 1
-NB_ITERATIONS=10
+NB_ITERATIONS=50
 DISPLAY=True
 
 # GAME
 SIZE = 8
 SLEEP_TIME = 0
-ALGS = [2, 2]              # 0: random, 1: negamax, 2: nega_alpha_beta, 3: monte_carlo
-STRATS = [0, 3]            # 0: positionnel, 1: absolu, 2: mobilité, 3: mixte
+ALGS = [3, 2]              # 0: random, 1: negamax, 2: nega_alpha_beta, 3: monte_carlo
+STRATS = [0, 0]            # 0: positionnel, 1: absolu, 2: mobilité, 3: mixte
 GAME_TYPE = 0              # 1: joueur vs joueur, 2: IA vs joueur, 3: joueur vs IA, IA vs IA sinon
 MAX_INT = np.iinfo(np.int16).max
 
 # IA    
 AVOID_DUPLICATES = False
 MAX_DEPTH = 4              # pair uniquement
-MAX_ITER = 200
-C = 1
+MAX_ITER = 1000
+C = 1.5
 MC_ROLLOUT_METHOD = 0      # 0: random, 1: probabiliste par l'heuristique, 2: deterministe par l'heuristique
 H1 = np.array(
     [

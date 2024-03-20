@@ -4,7 +4,7 @@ import numpy as np
 DEBUG=False
 ANALYSE=True              # ANALYSE_* = True passe automatiquement DISPLAY à False pour éviter les problèmes de performance
 ANALYSE_EACH_PLAY=True     # Uniquement pour le joueur 1
-NB_ITERATIONS=50
+NB_ITERATIONS=25
 DISPLAY=True
 
 # GAME
@@ -19,7 +19,7 @@ MAX_INT = np.iinfo(np.int16).max
 AVOID_DUPLICATES = False
 MAX_DEPTH = 4              # pair uniquement
 MAX_ITER = 1000
-C = 1.5
+C = 2
 MC_ROLLOUT_METHOD = 0      # 0: random, 1: probabiliste par l'heuristique, 2: deterministe par l'heuristique
 H1 = np.array(
     [

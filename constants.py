@@ -17,10 +17,10 @@ MAX_INT = np.iinfo(np.int16).max
 
 # IA    
 AVOID_DUPLICATES = False
-MAX_DEPTH = [2, 4]              # pair uniquement
+MAX_DEPTH = [2, 2]              # pair uniquement
 MAX_ITER = 500
 C = 2
-MC_ROLLOUT_METHOD = [0,2]      # 0: random, 1: probabiliste par l'heuristique, 2: deterministe par l'heuristique
+MC_ROLLOUT_METHOD = [0, 0]      # 0: random, 1: probabiliste par l'heuristique, 2: deterministe par l'heuristique
 H1 = np.array(
     [
         [500, -150, 30, 10, 10, 30, -150, 500],

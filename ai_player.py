@@ -99,7 +99,7 @@ class AIPlayer:
         """
         self.nb_plays += 1
  
-        if depth == MAX_DEPTH or len(board.adjacents) == 0:
+        if depth == MAX_DEPTH[type-1] or len(board.adjacents) == 0:
             return self.strat(board, None, pm, type)
 
         if depth != 0:
@@ -149,7 +149,7 @@ class AIPlayer:
         """
         self.nb_plays += 1
  
-        if depth == MAX_DEPTH or len(board.adjacents) == 0:
+        if depth == MAX_DEPTH[type-1] or len(board.adjacents) == 0:
             return self.strat(board, None, pm, type)
 
         if depth != 0:

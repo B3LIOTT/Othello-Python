@@ -56,10 +56,10 @@ class MonteCarlo:
         :param l: liste
         :return: élément de la liste selon MC_ROLLOUT_METHOD
         """
-        if MC_ROLLOUT_METHOD == 0:
+        if MC_ROLLOUT_METHOD[type-1] == 0:
             return random.choice(pm)
 
-        elif MC_ROLLOUT_METHOD == 1:
+        elif MC_ROLLOUT_METHOD[type-1] == 1:
             if type == self.type:
                 return random.choice(pm)
 

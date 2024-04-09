@@ -129,12 +129,6 @@ class Board:
                 current_y += dy
 
         return res_l
-    
-
-    def display_array(self):
-        print(self.game_array)
-        print("---------------------")
-        print("Adjacents: ", self.adjacents)
 
     
     def copy(self):

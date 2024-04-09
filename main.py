@@ -10,6 +10,7 @@ from time import sleep
 import cv2
 import numpy as np
 import time
+from multiprocessing import Pool, cpu_count
 
 
 def play(x: int, y: int, board: Board, move, type: int):
@@ -161,7 +162,8 @@ def start_game(TYPE: int = GAME_TYPE):
     else:
         p1 = AIPlayer(1)
         p2 = AIPlayer(2)
-    
+
+        
     print("[+] Debug mode activated: ", DEBUG)
     print("[+] Analyse mode activated: ", ANALYSE)
     print("[+] Display mode activated: ", DISPLAY)
@@ -270,6 +272,7 @@ def opencv_display(board: Board, possible_moves: list, type:int, interactable : 
         cv2.waitKey(10) # pour ralentir l'affichage, sinon c'est trop rapide et rien ne s'affiche
         
 
+
 def run():
     if ANALYSE:
         mean = 0
@@ -278,8 +281,7 @@ def run():
         each_mean_black = 0
         each_mean_white = 0
         accumulated_params = []
-        for i in range(NB_ITERATIONS):
-            print(f"[-]--------------------------{i+1}/{NB_ITERATIONS}-----------------------------")
+        for _ in range(NB_ITERATIONS):
             res = start_game(0)
             accumulated_params.append(res)
             mean += res[0]/NB_ITERATIONS
@@ -298,8 +300,8 @@ def run():
         print("[+] Victoires des blancs: ", round(white*100), "%")
         print("[+] Matchs nuls: ", 100 - round(black*100) - round(white*100), "%")
         
-        with open("res_MC.txt", "a") as f:
-            f.write(f"{MAX_DEPTH}:{mean}:{black}:{white}:{each_mean_black}:{each_mean_white}:{C}:{MAX_ITER}\n")
+        with open("res.txt", "a") as f:
+            f.write(f"{MAX_DEPTH}:{mean}:{black}:{white}:{each_mean_black}:{each_mean_white}\n")
 
 
         return [mean, black, white, each_mean_black, each_mean_white], accumulated_params

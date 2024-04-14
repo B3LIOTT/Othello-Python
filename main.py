@@ -10,7 +10,6 @@ from time import sleep
 import cv2
 import numpy as np
 import time
-from multiprocessing import Pool, cpu_count
 
 
 def play(x: int, y: int, board: Board, move, type: int):
@@ -281,7 +280,8 @@ def run():
         each_mean_black = 0
         each_mean_white = 0
         accumulated_params = []
-        for _ in range(NB_ITERATIONS):
+        for i in range(NB_ITERATIONS):
+            print(f"[-]----------------------------{i+1}----------------------------")
             res = start_game(0)
             accumulated_params.append(res)
             mean += res[0]/NB_ITERATIONS
